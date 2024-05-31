@@ -18,14 +18,14 @@ t_r_fds	r_fds_control(t_ast *raiz, t_pipex *p)
 
 	if (raiz->files[0] != NULL)
 	{
-		fds.r_fd_in = files_in_control(raiz);
+		fds.r_fd_in = files_in_control(raiz, p);
 		p->fd_exec[0] = fds.r_fd_in;
 	}
 	else
 		fds.r_fd_in = 0;
 	if (raiz->files[1] != NULL)
 	{
-		fds.r_fd_out = files_out_control(raiz);
+		fds.r_fd_out = files_out_control(raiz, p);
 		p->fd_exec[1] = fds.r_fd_out;
 	}
 	else

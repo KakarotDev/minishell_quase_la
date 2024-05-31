@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_paths.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:09:03 by parthur-          #+#    #+#             */
-/*   Updated: 2024/05/29 18:37:54 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/05/31 20:48:11 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,23 @@ char	*cria_path(t_dlist *tokens, t_pipex *p)
 
 	aux_t = tokens;
 	i = 0;
-	while (aux_t->next != NULL)
-		aux_t = aux_t->next;
-	while (aux_t->tok->type != PIPE && aux_t->prev != NULL)
-		aux_t = aux_t->prev;
+	aux_t = go_to_pipe_or_first(aux_t);
 	while (aux_t->tok->type != WORD)
 		aux_t = aux_t->next;
 	while (p->paths.mat_path[i] != NULL)
 	{
-		aux_path = ft_strjoin(p->paths.mat_path[i], aux_t->tok->lex);
+		if (ft_strchr(aux_t->tok->lex, '/'))
+		{
+			if (access(aux_t->tok->lex, X_OK) == 0)
+				aux_path = ft_strjoin(p->paths.mat_path[i++], is_an_address(aux_t->tok->lex));
+			else
+				aux_path = ft_strjoin(p->paths.mat_path[i++], aux_t->tok->lex);
+		}
+		else
+			aux_path = ft_strjoin(p->paths.mat_path[i++], aux_t->tok->lex);
 		if (access(aux_path, X_OK) == 0)
 			return (aux_path);
 		free(aux_path);
-		i++;
 	}
 	return (NULL);
 }
@@ -72,7 +76,15 @@ char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
 	{
 		if (tokens->tok->type == WORD)
 		{
-			mat_exc[i] = ft_strdup(tokens->tok->lex);
+			if (ft_strchr(tokens->tok->lex, '/'))
+			{
+				if (access(tokens->tok->lex, X_OK) == 0)
+					mat_exc[i] = is_an_address(tokens->tok->lex);
+				else
+					mat_exc[i] = ft_strdup(tokens->tok->lex);
+			}
+			else
+				mat_exc[i] = ft_strdup(tokens->tok->lex);
 			i++;
 		}
 		tokens = tokens->next;

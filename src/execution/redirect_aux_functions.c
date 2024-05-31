@@ -75,11 +75,12 @@ char	**have_append(t_dlist *tokens)
 	return (appends);
 }
 
-int	files_out_control(t_ast *raiz)
+int	files_out_control(t_ast *raiz, t_pipex *p)
 {
 	int	i;
 
 	i = 0;
+	redirect_out_error(raiz, p);
 	while (raiz->files[1][i] != NULL)
 	{
 		if (raiz->files[2] != NULL)
@@ -103,11 +104,12 @@ int	files_out_control(t_ast *raiz)
 	return (raiz->r_fds.r_fd_out);
 }
 
-int	files_in_control(t_ast *raiz)
+int	files_in_control(t_ast *raiz, t_pipex *p)
 {
 	int	i;
 
 	i = 0;
+	redirect_in_error(raiz, p);
 	while (raiz->files[0][i] != NULL)
 	{
 		raiz->r_fds.r_fd_in = open(raiz->files[0][i], O_RDONLY);

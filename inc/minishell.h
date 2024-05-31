@@ -155,6 +155,7 @@ char	*set_entrance(void);
 char	*ft_getenv(char *var);
 char	*validating_varname(char *varname, int *is_quoted);
 char	*ft_getenv(char *varname);
+char	*is_an_address(char *lex);
 void	closing_process(t_pipex *p, t_ast *raiz);
 void	free_tokens(t_dlist *tokens);
 void	free_struct_token(t_token *tok);
@@ -289,19 +290,24 @@ void	format_and_print_export(char *variable);
 int		interrupt_program(char *input);
 
 // Exec
-char	**tokens_to_args(t_ast *leaf);
-char	*get_path(char *command, char **envp);
-char	**cria_mat_cmds(t_dlist *tokens);
-char	*cria_path(t_dlist *tokens, t_pipex *p);
 char	***have_redirect(t_dlist *tokens);
 char	**have_append(t_dlist *tokens);
 char	**creat_append_mat(t_dlist *aux_t, int size_append);
-int		files_out_control(t_ast *raiz);
-int		files_in_control(t_ast *raiz);
+char	**cria_mat_cmds(t_dlist *tokens);
+char	**tokens_to_args(t_ast *leaf);
+char	*get_path(char *command, char **envp);
+char	*cria_path(t_dlist *tokens, t_pipex *p);
+char	*its_a_address(char *lex);
+int		files_out_control(t_ast *raiz, t_pipex *p);
+int		files_in_control(t_ast *raiz, t_pipex *p);
 void	handle_pipe(t_ast *leaf);
 void	execution(t_ast **ast);
 void	get_paths(t_pipex *p);
 t_ast	*cria_no_cmd(t_dlist *tokens, t_pipex *p, int i, int t);
 t_r_fds	r_fds_control(t_ast *raiz, t_pipex *p);
+
+// Exec errors
+void    redirect_in_error(t_ast *raiz, t_pipex *p);
+void    redirect_out_error(t_ast *raiz, t_pipex *p);
 
 #endif
