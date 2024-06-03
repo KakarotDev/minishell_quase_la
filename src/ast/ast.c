@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/05/29 18:55:57 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/03 18:10:25 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	ast_function(t_dlist **tokens)
 	t_pipex	*p;
 
 	tokens[0]->pipes = have_pipe(tokens[0]);
-	p = (t_pipex *)malloc(sizeof(t_pipex));
+	p = (t_pipex *)ft_calloc(sizeof(t_pipex), 1);
 	expansion(tokens);
 	quote_removal(tokens);
 	get_paths(p);

@@ -14,7 +14,7 @@
 
 char	*is_an_address(char *lex)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (lex[i] != '\0')

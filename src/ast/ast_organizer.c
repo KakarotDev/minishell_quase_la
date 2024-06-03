@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/05/28 19:34:04 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/03 18:04:17 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ void	only_child_functions(t_dlist **tokens, t_pipex *p)
 	p->f_id = fork();
 	if (p->f_id == 0)
 	{
+		free_chunk_list(tokens[0]);
+		free(tokens);
+		raiz->first = raiz;
 		raiz->r_fds = r_fds_control(raiz, p);
 		if (raiz->r_fds.r_fd_out != 0)
 			dup2(p->fd_exec[1], 1);

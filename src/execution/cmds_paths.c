@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_paths.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:09:03 by parthur-          #+#    #+#             */
-/*   Updated: 2024/05/31 20:48:11 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/03 19:13:35 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,27 +40,20 @@ char	*cria_path(t_dlist *tokens, t_pipex *p)
 {
 	t_dlist	*aux_t;
 	int		i;
-	char	*aux_path;
+	char	*path;
 
 	aux_t = tokens;
 	i = 0;
 	aux_t = go_to_pipe_or_first(aux_t);
-	while (aux_t->tok->type != WORD)
-		aux_t = aux_t->next;
-	while (p->paths.mat_path[i] != NULL)
+	aux_t = go_to_first_word(aux_t);
+	if (ft_strchr(aux_t->tok->lex, '/'))
+		return (ft_strdup(aux_t->tok->lex));
+	while (p->paths.mat_path[i] != NULL && aux_t->tok->type == WORD)
 	{
-		if (ft_strchr(aux_t->tok->lex, '/'))
-		{
-			if (access(aux_t->tok->lex, X_OK) == 0)
-				aux_path = ft_strjoin(p->paths.mat_path[i++], is_an_address(aux_t->tok->lex));
-			else
-				aux_path = ft_strjoin(p->paths.mat_path[i++], aux_t->tok->lex);
-		}
-		else
-			aux_path = ft_strjoin(p->paths.mat_path[i++], aux_t->tok->lex);
-		if (access(aux_path, X_OK) == 0)
-			return (aux_path);
-		free(aux_path);
+		path = ft_strjoin(p->paths.mat_path[i++], aux_t->tok->lex);
+		if (access(path, X_OK) == 0)
+			return (path);
+		free(path);
 	}
 	return (NULL);
 }

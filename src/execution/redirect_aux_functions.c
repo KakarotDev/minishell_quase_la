@@ -80,7 +80,6 @@ int	files_out_control(t_ast *raiz, t_pipex *p)
 	int	i;
 
 	i = 0;
-	redirect_out_error(raiz, p);
 	while (raiz->files[1][i] != NULL)
 	{
 		if (raiz->files[2] != NULL)
@@ -99,6 +98,7 @@ int	files_out_control(t_ast *raiz, t_pipex *p)
 			raiz->r_fds.r_fd_out = open(raiz->files[1][i],
 					O_WRONLY | O_CREAT | O_TRUNC, 0000666);
 		}
+		redirect_out_error(raiz, p);
 		i++;
 	}
 	return (raiz->r_fds.r_fd_out);

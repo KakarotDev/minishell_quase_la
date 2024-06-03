@@ -187,6 +187,7 @@ int		heredoc_file_counter(int filenum);
 int		received_sigint_in_heredoc(int status);
 size_t	matrix_len(char **mat);
 t_dlist	*go_to_pipe_or_first(t_dlist *aux_t);
+t_dlist	*go_to_first_word(t_dlist *tokens);
 
 // dlist procedures
 int		ft_dlist_have_type(t_dlist **tokens, enum e_type type);
@@ -307,7 +308,7 @@ t_ast	*cria_no_cmd(t_dlist *tokens, t_pipex *p, int i, int t);
 t_r_fds	r_fds_control(t_ast *raiz, t_pipex *p);
 
 // Exec errors
-void    redirect_in_error(t_ast *raiz, t_pipex *p);
-void    redirect_out_error(t_ast *raiz, t_pipex *p);
+void	redirect_in_error(t_ast *raiz, t_pipex *p);
+void	redirect_out_error(t_ast *raiz, t_pipex *p);
 
 #endif
