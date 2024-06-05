@@ -1,22 +1,2 @@
-total 468
--rw-r--r--  1 parthur- parthur-   5863 May 30 16:20 Makefile
--rw-r--r--  1 parthur- parthur-     10 May 30 15:13 ]
--rw-r--r--  1 parthur- parthur-      2 May 30 15:16 fileout
--rw-r--r--  1 parthur- parthur-      0 May 30 15:10 fileout10
--rw-r--r--  1 parthur- parthur-      0 May 30 15:10 fileout11
--rw-r--r--  1 parthur- parthur-      0 May 31 17:48 fileout2
--rw-r--r--  1 parthur- parthur-      0 May 30 15:10 fileout3
--rw-r--r--  1 parthur- parthur-   4896 May 30 15:10 fileout4
--rw-r--r--  1 parthur- parthur-   6136 May 30 15:10 fileout5
--rw-r--r--  1 parthur- parthur-      0 May 30 15:10 fileout6
--rw-r--r--  1 parthur- parthur-   1224 May 30 15:10 fileout7
--rw-r--r--  1 parthur- parthur-   1278 May 31 17:15 fileout8
--r--r--r--  1 parthur- parthur-      3 May 30 15:10 fileout9
-drwxr-xr-x  2 parthur- parthur-   4096 May 30 15:10 inc
-drwxr-xr-x  3 parthur- parthur-   4096 May 30 15:10 lib
--rwxr-xr-x  1 parthur- parthur- 401672 May 31 17:48 minishell
-drwxr-xr-x  3 parthur- parthur-   4096 May 30 15:12 obj
-drwxr-xr-x 15 parthur- parthur-   4096 May 30 15:10 src
--rw-r--r--  1 parthur- parthur-     90 May 30 15:10 supp.supp
--rw-r--r--  1 parthur- parthur-   1044 May 30 15:10 test.c
--rw-r--r--  1 parthur- parthur-   2759 May 30 15:10 testing_expansion.txt
+oio
+i

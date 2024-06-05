@@ -126,9 +126,6 @@ typedef struct s_pipex
 	t_paths		paths;
 	t_fd_files	fd_files;
 	enum e_type	id_t;
-	char		**argv;
-	int			argc;
-	char		**envp;
 	int			pipe_fd[2];
 	int			fork_id;
 	int			c;
@@ -137,6 +134,7 @@ typedef struct s_pipex
 	int			exit_fd;
 	int			input_fd;
 	int			f_id;
+	int			save_fd[2];
 }	t_pipex;
 
 // Print functions
@@ -260,8 +258,8 @@ void	parser(t_dlist **tokens);
 int		parser_validation(t_dlist **tokens);
 
 // AST procedures
-void	ast_function(t_dlist **tokens);
 void	exec_cmd(t_ast *raiz, t_pipex *p);
+void	ast_function(t_dlist **tokens);
 void	tree_exec(t_ast *raiz, t_pipex *p, int fd);
 void	standard_command_organizer(t_ast *raiz, t_pipex *p);
 void	first_command_organizer(t_ast *raiz, t_pipex *p);
@@ -275,7 +273,7 @@ t_ast	*cria_no_arv(t_dlist *tokens, t_pipex *p, int i, int t);
 t_dlist	*free_chunk_list(t_dlist *tokens);
 
 // Builtins
-int		builtins_caller(char **matrix);
+int		builtins_caller(t_ast *root, t_pipex *p);
 int		cd(char **matrix);
 int		export(char **matrix);
 int		echo(char **matrix);

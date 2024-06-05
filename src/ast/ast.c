@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/03 18:10:25 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:41:49 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,28 @@ t_ast	*cria_arvore(t_dlist **t, t_pipex *p)
 void	exec_cmd(t_ast *raiz, t_pipex *p)
 {
 	int		f_id;
+	int		exit_status;
 
-	f_id = fork();
-	if (f_id == 0)
+//	raiz->r_fds = r_fds_control(raiz, p);
+//	f_id = fork();
+	if (*raiz->cmd && (builtins_caller(raiz, p) < 0))
 	{
-		raiz->r_fds = r_fds_control(raiz, p);
-		if (raiz->index != 3 || raiz->r_fds.r_fd_out != 0)
-			dup2(p->fd_exec[1], 1);
-		if (raiz->index != 1 || raiz->r_fds.r_fd_in != 0)
-			dup2(p->fd_exec[0], 0);
-		close_fds(1024);
-		if (execve(raiz->path, raiz->cmd, hook_environ(NULL, 0)) == -1)
-			exit(last_exit_status(-1));
+		exit_status = command_not_found(raiz->path, raiz->cmd);
+        if (!exit_status && raiz->path && **raiz->cmd)
+    	{
+			f_id = fork();
+			if (f_id == 0)
+			{
+				//raiz->r_fds = r_fds_control(raiz, p);
+				if (raiz->index != 3 || raiz->r_fds.r_fd_out != 0)
+					dup2(p->fd_exec[1], 1);
+				if (raiz->index != 1 || raiz->r_fds.r_fd_in != 0)
+				dup2(p->fd_exec[0], 0);
+				close_fds(1024);
+				if (execve(raiz->path, raiz->cmd, hook_environ(NULL, 0)) == -1)
+					exit(last_exit_status(-1));
+			}
+		}
 	}
 	if (raiz->index != 1)
 		close(p->fd_exec[0]);
