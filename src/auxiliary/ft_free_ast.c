@@ -21,7 +21,7 @@ void	free_tokens(t_dlist *tokens)
 
 void	closing_process(t_pipex *p, t_ast *raiz)
 {
-	close_fds(p->pipe_fd[1]);
+	close_fds(1024);
 	ft_free_matrix_char(p->paths.mat_path);
 	free(p);
 	ft_free_ast(raiz->first);
@@ -58,4 +58,27 @@ void	ft_free_ast(t_ast *root)
 		free(root->dir);
 	}
 	free(root);
+}
+
+t_dlist	*free_chunk_list(t_dlist *tokens)
+{
+	while (tokens->next != NULL)
+		tokens = tokens->next;
+	while (tokens->tok->type != PIPE && tokens->prev)
+	{
+		tokens = tokens->prev;
+		free_tokens(tokens->next);
+	}
+	if (tokens->prev)
+	{
+		tokens = tokens->prev;
+		free_tokens(tokens->next);
+		tokens->next = NULL;
+	}
+	else
+	{
+		free_tokens(tokens);
+		tokens = NULL;
+	}
+	return (tokens);
 }

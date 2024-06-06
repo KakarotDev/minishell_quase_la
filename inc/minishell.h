@@ -273,7 +273,8 @@ t_ast	*cria_no_arv(t_dlist *tokens, t_pipex *p, int i, int t);
 t_dlist	*free_chunk_list(t_dlist *tokens);
 
 // Builtins
-int		builtins_caller(t_ast *root, t_pipex *p);
+int		builtins_checker(t_ast *root);
+int		builtins_caller(t_ast *root, t_pipex *p, int control);
 int		cd(char **matrix);
 int		export(char **matrix);
 int		echo(char **matrix);
@@ -302,6 +303,7 @@ int		files_in_control(t_ast *raiz, t_pipex *p);
 void	handle_pipe(t_ast *leaf);
 void	execution(t_ast **ast);
 void	get_paths(t_pipex *p);
+void	execve_error_exit(t_ast *root);
 t_ast	*cria_no_cmd(t_dlist *tokens, t_pipex *p, int i, int t);
 t_r_fds	r_fds_control(t_ast *raiz, t_pipex *p);
 

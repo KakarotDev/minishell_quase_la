@@ -26,10 +26,9 @@ void	closing_process_message(t_ast *raiz, t_pipex *p, int i, int type)
 {
 	printf_message(raiz, i, type);
 	if (p->pipe_fd[1])
-		close_fds(p->pipe_fd[1]);
+		close_fds(1024);
 	else
-		close_fds((ft_matrix_count(raiz->files[0])
-				+ ft_matrix_count(raiz->files[1]) + 3));
+		close_fds(1024);
 	ft_free_matrix_char(p->paths.mat_path);
 	free(p);
 	ft_free_ast(raiz->first);

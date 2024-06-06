@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_aux_functions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 23:24:33 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/04 04:02:40 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/06 18:24:16 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,29 +25,6 @@ void	closing_only_child(t_pipex *p, t_ast *raiz, t_dlist *tokens)
 	free(p);
 	ft_free_ast(raiz);
 	free_chunk_list(tokens);
-}
-
-t_dlist	*free_chunk_list(t_dlist *tokens)
-{
-	while (tokens->next != NULL)
-		tokens = tokens->next;
-	while (tokens->tok->type != PIPE && tokens->prev)
-	{
-		tokens = tokens->prev;
-		free_tokens(tokens->next);
-	}
-	if (tokens->prev)
-	{
-		tokens = tokens->prev;
-		free_tokens(tokens->next);
-		tokens->next = NULL;
-	}
-	else
-	{
-		free_tokens(tokens);
-		tokens = NULL;
-	}
-	return (tokens);
 }
 
 t_ast	*cria_no_arv(t_dlist *tokens, t_pipex *p, int i, int t)
@@ -70,4 +47,13 @@ t_ast	*adiciona_no(t_ast *raiz, t_ast *no)
 		return (no);
 	raiz->esq = adiciona_no(raiz->esq, no);
 	return (raiz);
+}
+
+void	execve_error_exit(t_ast *root)
+{
+	hook_environ(NULL, 1);
+	hook_pwd(NULL, 1);
+	ft_free_ast(root);
+	exit(last_exit_status(-1));
+	return ;
 }
