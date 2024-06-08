@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 23:24:33 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/06 18:24:16 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/07 18:06:46 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	closing_father(t_pipex *p, t_ast *raiz)
 	ft_free_ast(raiz);
 	ft_free_matrix_char(p->paths.mat_path);
 	free(p);
+	close_fds(1024);
 }
 
 void	closing_only_child(t_pipex *p, t_ast *raiz, t_dlist *tokens)

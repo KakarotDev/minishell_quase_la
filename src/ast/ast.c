@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/06 18:38:51 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/07 21:04:51 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,21 @@ void	exec_cmd(t_ast *raiz, t_pipex *p)
 		close(p->fd_exec[1]);
 }
 
+void	final_process(t_ast *root, t_pipex *p)
+{
+	int	f_id;
+	int	status;
+
+	f_id = fork();
+	if (f_id == 0)
+	{
+		standard_command_organizer(root, p);
+		closing_process(p, root);
+	}
+	// printf("TESTE = %d\n", get_ret_process(f_id));
+	waitpid(f_id, &status, 0);
+}
+
 void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 {
 	p->exit_fd = fd;
@@ -93,16 +108,19 @@ void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 			tree_exec(raiz->esq, p, fd);
 			closing_process(p, raiz);
 		}
-		waitpid(p->f_id, NULL, 0);
+		//waitpid(p->f_id, NULL, 0);
 	}
 	else
 	{
 		p->f_id = fork();
 		if (p->f_id == 0)
 			first_command_organizer(raiz, p);
-		waitpid(p->f_id, NULL, 0);
+		//waitpid(p->f_id, NULL, 0);
 	}
-	standard_command_organizer(raiz, p);
+	if (raiz->dir->index == 3)
+		final_process(raiz, p);
+	else
+		standard_command_organizer(raiz, p);
 }
 
 void	ast_function(t_dlist **tokens)

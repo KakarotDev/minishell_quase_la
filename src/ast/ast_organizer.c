@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/06 19:04:00 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/07 21:03:25 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	brothers_functions(t_dlist **tokens, t_pipex *p)
 	free(tokens);
 	raiz->first = raiz;
 	tree_exec(raiz, p, STDOUT_FILENO);
-	wait(NULL);
+	waitpid(-1, NULL, 0);
 	closing_father(p, raiz);
 }
 
@@ -50,6 +50,7 @@ int	execv_only_child(t_ast *root, t_pipex *p)
 	int	exit_status;
 
 	p->f_id = fork();
+	exit_status = 0;
 	if (p->f_id == 0)
 	{
 		if (root->r_fds.r_fd_out != 0)
@@ -60,7 +61,7 @@ int	execv_only_child(t_ast *root, t_pipex *p)
 		if (execve(root->path, root->cmd, hook_environ(NULL, 0)) == -1)
 			execve_error_exit(root);
 	}
-	waitpid(p->f_id, &exit_status, 0);
+	//waitpid(p->f_id, &exit_status, 0);
 	return (exit_status);
 }
 
