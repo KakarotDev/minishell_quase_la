@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/07 21:03:25 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/07 21:42:58 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,9 @@ void	brothers_functions(t_dlist **tokens, t_pipex *p)
 	free(tokens);
 	raiz->first = raiz;
 	tree_exec(raiz, p, STDOUT_FILENO);
+	//printf("TESTE=%d\n", get_ret_process(-1));
 	waitpid(-1, NULL, 0);
+	//wait(NULL);
 	closing_father(p, raiz);
 }
 

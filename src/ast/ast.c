@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/07 21:04:51 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/07 22:12:43 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	execv_pipes(t_ast *root, t_pipex *p)
 		if (execve(root->path, root->cmd, hook_environ(NULL, 0)) == -1)
 			exit(last_exit_status(-1));
 	}
+	//waitpid(f_id, NULL, 0);
 }
 
 void	exec_cmd(t_ast *raiz, t_pipex *p)
@@ -80,7 +81,7 @@ void	exec_cmd(t_ast *raiz, t_pipex *p)
 void	final_process(t_ast *root, t_pipex *p)
 {
 	int	f_id;
-	int	status;
+	//int	status;
 
 	f_id = fork();
 	if (f_id == 0)
@@ -89,7 +90,7 @@ void	final_process(t_ast *root, t_pipex *p)
 		closing_process(p, root);
 	}
 	// printf("TESTE = %d\n", get_ret_process(f_id));
-	waitpid(f_id, &status, 0);
+	//waitpid(f_id, &status, 0);
 }
 
 void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
@@ -108,18 +109,18 @@ void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 			tree_exec(raiz->esq, p, fd);
 			closing_process(p, raiz);
 		}
-		//waitpid(p->f_id, NULL, 0);
+		waitpid(p->f_id, NULL, 0);
 	}
 	else
 	{
 		p->f_id = fork();
 		if (p->f_id == 0)
 			first_command_organizer(raiz, p);
-		//waitpid(p->f_id, NULL, 0);
+		waitpid(p->f_id, NULL, 0);
 	}
-	if (raiz->dir->index == 3)
-		final_process(raiz, p);
-	else
+	// if (raiz->dir->index == 3)
+	// 	final_process(raiz, p);
+	// else
 		standard_command_organizer(raiz, p);
 }
 
