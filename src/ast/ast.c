@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/11 23:01:25 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/11 23:22:42 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,16 +123,16 @@ void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 	{
 		p->f_id_left = fork();
 		if (p->f_id_left == 0)
-			first_command_organizer(raiz->esq, p);
+			first_command_organizer(raiz, p);
 		p->f_id_right = fork();
 		if (p->f_id_right == 0)
 		{
-			standard_command_organizer(raiz->dir, p);
+			standard_command_organizer(raiz, p);
 			closing_process(p, raiz);
 		}
 	}
-	// waitpid(p->f_id_left, NULL, 0);
-	// waitpid(p->f_id_right, NULL, 0);
+	waitpid(p->f_id_left, NULL, 0);
+	waitpid(p->f_id_right, NULL, 0);
 }
 
 void	ast_function(t_dlist **tokens)

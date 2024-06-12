@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/11 22:59:42 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/11 23:21:05 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	first_command_organizer(t_ast *raiz, t_pipex *p)
 {
 	p->fd_exec[1] = p->pipe_fd[1];
 	p->fd_exec[0] = STDIN_FILENO;
-	exec_cmd(raiz, p);
+	exec_cmd(raiz->esq, p);
 	closing_process(p, raiz);
 }
 
@@ -25,7 +25,7 @@ void	standard_command_organizer(t_ast *raiz, t_pipex *p)
 	//if (raiz->dir->index != 3)
 	p->fd_exec[1] = p->exit_fd;
 	p->fd_exec[0] = p->input_fd;
-	exec_cmd(raiz, p);
+	exec_cmd(raiz->dir, p);
 	if (raiz->index == 3)
 	{
 		close(p->pipe_fd[1]);
