@@ -133,7 +133,9 @@ typedef struct s_pipex
 	int			fd_exec[2];
 	int			exit_fd;
 	int			input_fd;
-	int			f_id;
+	int			f_id_left;
+	int			f_id_right;
+	int			f_id_exec;
 	int			save_fd[2];
 }	t_pipex;
 
@@ -155,6 +157,7 @@ char	*validating_varname(char *varname, int *is_quoted);
 char	*ft_getenv(char *varname);
 char	*is_an_address(char *lex);
 void	closing_process(t_pipex *p, t_ast *raiz);
+void	closing_process_right(t_pipex *p, t_ast *raiz);
 void	free_tokens(t_dlist *tokens);
 void	free_struct_token(t_token *tok);
 void	ft_free_ast(t_ast *root);
