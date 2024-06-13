@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/12 00:28:15 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:43:07 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,27 +43,30 @@ t_ast	*cria_arvore(t_dlist **t, t_pipex *p)
 
 void	execv_pipes(t_ast *root, t_pipex *p)
 {
-	int	f_id;
-
-	f_id = fork();
-	if (f_id == 0)
+	p->f_id_grandchild = fork();
+	if (p->f_id_grandchild == 0)
 	{
-		if (root->index != 3 || root->r_fds.r_fd_out != 0)
-			dup2(p->fd_exec[1], STDOUT_FILENO);
-		if (root->index != 1 || root->r_fds.r_fd_in != 0)
-			dup2(p->fd_exec[0], STDIN_FILENO);
-		close_fds(p->pipe_fd[1]);
-		//sleep(2);
+		if (p->redir_fds[1] != 0)
+		{
+			dup2(p->redir_fds[1], STDOUT_FILENO);
+			close(p->redir_fds[1]);
+		}
+		if (p->redir_fds[0] != 0)
+		{
+			dup2(p->redir_fds[0], STDIN_FILENO);
+			close(p->redir_fds[0]);
+		}
 		if (execve(root->path, root->cmd, hook_environ(NULL, 0)) == -1)
 			exit(last_exit_status(-1));
 	}
+	waitpid(p->f_id_grandchild, NULL, 0);
 }
 
 void	exec_cmd(t_ast *raiz, t_pipex *p)
 {
 	int		exit_status;
 
-	raiz->r_fds = r_fds_control(raiz, p);
+	redir_fds_control(raiz, p);
 	if (*raiz->cmd && (builtins_checker(raiz) < 0))
 	{
 		exit_status = command_not_found(raiz->path, raiz->cmd);
@@ -72,25 +75,21 @@ void	exec_cmd(t_ast *raiz, t_pipex *p)
 	}
 	else
 		exit_status = builtins_caller(raiz, p, 0);
-	if (raiz->index != 1)
-		close(p->fd_exec[0]);
-	if (raiz->index != 3)
-		close(p->fd_exec[1]);
 }
 
 void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 {
-	p->exit_fd = fd;
 	if (pipe(p->pipe_fd) == -1)
 		return ;
-	p->input_fd = p->pipe_fd[0];
 	if (raiz->esq->type == PIPE)
 	{
 		p->f_id_left = fork();
 		if (p->f_id_left == 0)
 		{
-			fd = p->pipe_fd[1];
 			raiz->esq->first = raiz->first;
+			dup2(p->pipe_fd[1], STDOUT_FILENO);
+			close(p->pipe_fd[1]);
+			close(p->pipe_fd[0]);
 			tree_exec(raiz->esq, p, fd);
 			closing_process(p, raiz);
 		}
@@ -105,7 +104,9 @@ void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 	{
 		p->f_id_left = fork();
 		if (p->f_id_left == 0)
+		{
 			first_command_organizer(raiz, p);
+		}
 		p->f_id_right = fork();
 		if (p->f_id_right == 0)
 		{
@@ -113,6 +114,8 @@ void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
 			closing_process(p, raiz);
 		}
 	}
+	close(p->pipe_fd[1]);
+	close(p->pipe_fd[0]);
 	waitpid(p->f_id_left, NULL, 0);
 	waitpid(p->f_id_right, NULL, 0);
 }

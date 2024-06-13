@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:00:17 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/06 18:53:43 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:54:49 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,11 @@ void	save_fd_for_builtins(t_ast *root, t_pipex *p, int control)
 {
 	if (control == 0)
 	{
-		if (root->index != 3 || root->r_fds.r_fd_out != 0)
-			dup2(p->fd_exec[1], STDOUT_FILENO);
+		if (p->redir_fds[1] != 0)
+		{
+			dup2(p->redir_fds[1], STDOUT_FILENO);
+			close(p->redir_fds[1]);
+		}
 	}
 	if (control == 1)
 	{
@@ -25,7 +28,6 @@ void	save_fd_for_builtins(t_ast *root, t_pipex *p, int control)
 			dup2(p->save_fd[1], STDOUT_FILENO);
 		else if (root->r_fds.r_fd_in != 0)
 			dup2(p->save_fd[0], STDIN_FILENO);
-		//close_fds(1024);
 	}
 }
 

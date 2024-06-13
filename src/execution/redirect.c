@@ -12,25 +12,16 @@
 
 #include "minishell.h"
 
-t_r_fds	r_fds_control(t_ast *raiz, t_pipex *p)
+void	redir_fds_control(t_ast *raiz, t_pipex *p)
 {
-	t_r_fds	fds;
-
 	if (raiz->files[0] != NULL)
-	{
-		fds.r_fd_in = files_in_control(raiz, p);
-		p->fd_exec[0] = fds.r_fd_in;
-	}
+		p->redir_fds[0] = files_in_control(raiz, p);
 	else
-		fds.r_fd_in = 0;
+		p->redir_fds[0] = 0;
 	if (raiz->files[1] != NULL)
-	{
-		fds.r_fd_out = files_out_control(raiz, p);
-		p->fd_exec[1] = fds.r_fd_out;
-	}
+		p->redir_fds[1] = files_out_control(raiz, p);
 	else
-		fds.r_fd_out = 0;
-	return (fds);
+		p->redir_fds[1] = 0;
 }
 
 char	**creat_file_mat(t_dlist *tokens, int result, enum e_type type,

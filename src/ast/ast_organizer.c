@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/12 00:27:54 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:52:15 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,19 @@
 
 void	first_command_organizer(t_ast *raiz, t_pipex *p)
 {
-	p->fd_exec[1] = p->pipe_fd[1];
-	p->fd_exec[0] = STDIN_FILENO;
+	dup2(p->pipe_fd[1], STDOUT_FILENO);
+	close(p->pipe_fd[1]);
+	close(p->pipe_fd[0]);
 	exec_cmd(raiz->esq, p);
 	closing_process(p, raiz);
 }
 
 void	standard_command_organizer(t_ast *raiz, t_pipex *p)
 {
-	//if (raiz->dir->index != 3)
-	p->fd_exec[1] = p->exit_fd;
-	p->fd_exec[0] = p->input_fd;
+	dup2(p->pipe_fd[0], STDIN_FILENO);
+	close(p->pipe_fd[1]);
+	close(p->pipe_fd[0]);
 	exec_cmd(raiz->dir, p);
-	if (raiz->index == 3)
-	{
-		close(p->pipe_fd[1]);
-		close(p->pipe_fd[0]);
-	}
 }
 
 void	brothers_functions(t_dlist **tokens, t_pipex *p)
@@ -41,30 +37,32 @@ void	brothers_functions(t_dlist **tokens, t_pipex *p)
 	free(tokens);
 	raiz->first = raiz;
 	tree_exec(raiz, p, STDOUT_FILENO);
-	//tree_exec(raiz, p, STDOUT_FILENO);
-	//printf("TESTE=%d\n", get_ret_process(-1));
-	//waitpid(-1, NULL, 0);
-	//wait(NULL);
 	closing_father(p, raiz);
 }
 
 int	execv_only_child(t_ast *root, t_pipex *p)
 {
 	int	exit_status;
+	int	pid;
 
-	p->f_id_exec = fork();
+	pid = fork();
 	exit_status = 0;
-	if (p->f_id_exec == 0)
+	if (pid == 0)
 	{
-		if (root->r_fds.r_fd_out != 0)
-			dup2(p->fd_exec[1], 1);
-		if (root->r_fds.r_fd_in != 0)
-			dup2(p->fd_exec[0], 0);
-		close_fds(1024);
+		if (p->redir_fds[1] != 0)
+		{
+			dup2(p->redir_fds[1], STDOUT_FILENO);
+			close(p->redir_fds[1]);
+		}		
+		if (p->redir_fds[0] != 0)
+		{
+			dup2(p->redir_fds[0], STDIN_FILENO);
+			close(p->redir_fds[0]);
+		}
 		execve(root->path, root->cmd, hook_environ(NULL, 0));
 		execve_error_exit(root);
 	}
-	waitpid(p->f_id_exec, &exit_status, 0);
+	waitpid(pid, &exit_status, 0);
 	return (exit_status);
 }
 
@@ -74,7 +72,7 @@ void	only_child_functions(t_dlist **tokens, t_pipex *p)
 	int		exit_status;
 
 	root = cria_no_cmd(*tokens, p, 0, 0);
-	root->r_fds = r_fds_control(root, p);
+	redir_fds_control(root, p);
 	if (*root->cmd && (builtins_checker(root) < 0))
 	{
 		exit_status = command_not_found(root->path, root->cmd);

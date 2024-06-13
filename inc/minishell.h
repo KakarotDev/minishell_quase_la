@@ -130,12 +130,10 @@ typedef struct s_pipex
 	int			fork_id;
 	int			c;
 	int			status;
-	int			fd_exec[2];
-	int			exit_fd;
-	int			input_fd;
+	int			redir_fds[2];
 	int			f_id_left;
 	int			f_id_right;
-	int			f_id_exec;
+	int			f_id_grandchild;
 	int			save_fd[2];
 }	t_pipex;
 
@@ -308,7 +306,7 @@ void	execution(t_ast **ast);
 void	get_paths(t_pipex *p);
 void	execve_error_exit(t_ast *root);
 t_ast	*cria_no_cmd(t_dlist *tokens, t_pipex *p, int i, int t);
-t_r_fds	r_fds_control(t_ast *raiz, t_pipex *p);
+void	redir_fds_control(t_ast *raiz, t_pipex *p);
 
 // Exec errors
 void	redirect_in_error(t_ast *raiz, t_pipex *p);

@@ -86,22 +86,22 @@ int	files_out_control(t_ast *raiz, t_pipex *p)
 		{
 			if (check_append(raiz->files[2], ft_itoa(i)) > 0)
 			{
-				raiz->r_fds.r_fd_out = open(raiz->files[1][i],
+				p->redir_fds[1] = open(raiz->files[1][i],
 						O_WRONLY | O_CREAT | O_APPEND, 0000666);
 			}
 			else
-				raiz->r_fds.r_fd_out = open(raiz->files[1][i],
+				p->redir_fds[1] = open(raiz->files[1][i],
 						O_WRONLY | O_CREAT | O_TRUNC, 0000666);
 		}
 		else
 		{
-			raiz->r_fds.r_fd_out = open(raiz->files[1][i],
+			p->redir_fds[1] = open(raiz->files[1][i],
 					O_WRONLY | O_CREAT | O_TRUNC, 0000666);
 		}
 		redirect_out_error(raiz, p);
 		i++;
 	}
-	return (raiz->r_fds.r_fd_out);
+	return (p->redir_fds[1]);
 }
 
 int	files_in_control(t_ast *raiz, t_pipex *p)
@@ -112,8 +112,8 @@ int	files_in_control(t_ast *raiz, t_pipex *p)
 	redirect_in_error(raiz, p);
 	while (raiz->files[0][i] != NULL)
 	{
-		raiz->r_fds.r_fd_in = open(raiz->files[0][i], O_RDONLY);
+		p->redir_fds[0] = open(raiz->files[0][i], O_RDONLY);
 		i++;
 	}
-	return (raiz->r_fds.r_fd_in);
+	return (p->redir_fds[0]);
 }
