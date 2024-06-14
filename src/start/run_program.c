@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:01:47 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/13 17:19:31 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/14 20:25:12 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ char	*call_readline(void)
 	input = readline(entrance);
 	after_prompt(1);
 	free(entrance);
-	add_history(input);
 	return (input);
 }
 
@@ -58,6 +57,7 @@ int	run_program(void)
 			last_exit_status(syntax_error(UNCLOSED_QUOTE, NULL));
 		else if (*input != '\0')
 		{
+			add_history(input);
 			tokens = lexer(input);
 			parser(tokens);
 		}

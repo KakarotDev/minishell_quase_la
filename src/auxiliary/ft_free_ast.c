@@ -21,10 +21,10 @@ void	free_tokens(t_dlist *tokens)
 
 void	closing_process(t_pipex *p, t_ast *raiz)
 {
-	if (raiz->r_fds.r_fd_in != 0)
-		close(raiz->r_fds.r_fd_in);
-	if (raiz->r_fds.r_fd_out != 0)
-		close(raiz->r_fds.r_fd_out);
+	if (p->redir_fds[0] != 0)
+		close(p->redir_fds[0]);
+	if (p->redir_fds[1] != 0)
+		close(p->redir_fds[1]);
 	ft_free_matrix_char(p->paths.mat_path);
 	free(p);
 	ft_free_ast(raiz->first);

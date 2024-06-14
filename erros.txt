@@ -1,0 +1,10 @@
+verificações:
+
+1 - caso do $=user, expansão, deu diferente do bash, no bash  o $ aparece
+2 - verificar se ao passar o path no comando da builtin se executa a builtin o o execv e se ao passar o path na matriz
+de comando funciona
+3 - liberar memoria e verificar os fds abertos ao chamar o exit
+4 - alterar todas as saida de erros no 2
+5 - pegar a saida do processo final, last_exit_status(get_ret_process(pid_right));
+6 - tratar sinais para a execução
+7 - implementar a expansão turbinada 
