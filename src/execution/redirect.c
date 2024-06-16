@@ -12,40 +12,40 @@
 
 #include "minishell.h"
 
-void	redir_fds_control(t_ast *raiz, t_pipex *p)
+void	redir_fds_control(t_ast *root)
 {
-	if (raiz->files[0] != NULL)
-		p->redir_fds[0] = files_in_control(raiz, p);
+	if (root->files[0] != NULL)
+		files_in_control(root);
 	else
-		p->redir_fds[0] = 0;
-	if (raiz->files[1] != NULL)
-		p->redir_fds[1] = files_out_control(raiz, p);
+		root->redir_fds[0] = 0;
+	if (root && root->files[1] != NULL)
+		files_out_control(root);
 	else
-		p->redir_fds[1] = 0;
+		root->redir_fds[1] = 0;
 }
 
 char	**creat_file_mat(t_dlist *tokens, int result, enum e_type type,
 		enum e_type typ)
 {
-	t_dlist	*aux_t;
+	t_dlist	*aux;
 	char	**mat;
 	int		i;
 
 	i = -1;
-	aux_t = tokens;
+	aux = tokens;
 	if (result > 0)
 	{
 		mat = ft_calloc(sizeof(char *), (result + 1));
-		aux_t = go_to_pipe_or_first(aux_t);
-		while (aux_t)
+		aux = go_to_pipe_or_first(aux);
+		while (aux)
 		{
-			if (aux_t->tok->type == type)
-				mat[++i] = ft_strdup(aux_t->next->tok->lex);
-			else if (aux_t->tok->type == typ && typ == H_DOC)
-				mat[++i] = ft_strdup(aux_t->tok->heredoc_file);
-			else if (aux_t->tok->type == typ && typ == APPEND)
-				mat[++i] = ft_strdup(aux_t->next->tok->lex);
-			aux_t = aux_t->next;
+			if (aux->tok->type == type)
+				mat[++i] = ft_strdup(aux->next->tok->lex);
+			else if (aux->tok->type == typ && typ == H_DOC)
+				mat[++i] = ft_strdup(aux->tok->heredoc_file);
+			else if (aux->tok->type == typ && typ == APPEND)
+				mat[++i] = ft_strdup(aux->next->tok->lex);
+			aux = aux->next;
 		}
 	}
 	else
@@ -56,21 +56,21 @@ char	**creat_file_mat(t_dlist *tokens, int result, enum e_type type,
 char	**files_in(t_dlist *tokens)
 {
 	int		result;
-	t_dlist	*aux_t;
+	t_dlist	*aux;
 	char	**files;
 
-	aux_t = tokens;
+	aux = tokens;
 	result = 0;
-	while (aux_t->next != NULL)
-		aux_t = aux_t->next;
-	while (aux_t->tok->type != PIPE && aux_t->prev)
+	while (aux->next != NULL)
+		aux = aux->next;
+	while (aux->tok->type != PIPE)
 	{
-		if (aux_t->tok->type == R_IN || aux_t->tok->type == H_DOC)
+		if (aux->tok->type == R_IN || aux->tok->type == H_DOC)
 			result++;
-		aux_t = aux_t->prev;
+		if (aux->prev == NULL)
+			break ;
+		aux = aux->prev;
 	}
-	if (aux_t->tok->type == R_IN || aux_t->tok->type == H_DOC)
-		result++;
 	files = creat_file_mat(tokens, result, R_IN, H_DOC);
 	return (files);
 }
@@ -78,18 +78,20 @@ char	**files_in(t_dlist *tokens)
 char	**files_out(t_dlist *tokens)
 {
 	int		result;
-	t_dlist	*aux_t;
+	t_dlist	*aux;
 	char	**files;
 
-	aux_t = tokens;
+	aux = tokens;
 	result = 0;
-	while (aux_t->next != NULL)
-		aux_t = aux_t->next;
-	while (aux_t->tok->type != PIPE && aux_t->prev != NULL)
+	while (aux->next != NULL)
+		aux = aux->next;
+	while (aux->tok->type != PIPE)
 	{
-		if (aux_t->tok->type == R_OUT || aux_t->tok->type == APPEND)
+		if (aux->tok->type == R_OUT || aux->tok->type == APPEND)
 			result++;
-		aux_t = aux_t->prev;
+		if (aux->prev == NULL)
+			break ;
+		aux = aux->prev;
 	}
 	files = creat_file_mat(tokens, result, R_OUT, APPEND);
 	return (files);

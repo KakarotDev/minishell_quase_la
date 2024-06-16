@@ -75,45 +75,47 @@ char	**have_append(t_dlist *tokens)
 	return (appends);
 }
 
-int	files_out_control(t_ast *raiz, t_pipex *p)
+void	files_out_control(t_ast *root)
 {
 	int	i;
 
 	i = 0;
-	while (raiz->files[1][i] != NULL)
+	while (root->files[1][i] != NULL)
 	{
-		if (raiz->files[2] != NULL)
+		if (root->files[2] != NULL)
 		{
-			if (check_append(raiz->files[2], ft_itoa(i)) > 0)
+			if (check_append(root->files[2], ft_itoa(i)) > 0)
 			{
-				p->redir_fds[1] = open(raiz->files[1][i],
+				root->redir_fds[1] = open(root->files[1][i],
 						O_WRONLY | O_CREAT | O_APPEND, 0000666);
 			}
 			else
-				p->redir_fds[1] = open(raiz->files[1][i],
+				root->redir_fds[1] = open(root->files[1][i],
 						O_WRONLY | O_CREAT | O_TRUNC, 0000666);
 		}
 		else
 		{
-			p->redir_fds[1] = open(raiz->files[1][i],
+			root->redir_fds[1] = open(root->files[1][i],
 					O_WRONLY | O_CREAT | O_TRUNC, 0000666);
 		}
-		redirect_out_error(raiz, p);
+		redirect_out_error(root);
+		if (!root)
+			break ;
 		i++;
 	}
-	return (p->redir_fds[1]);
+	return ;
 }
 
-int	files_in_control(t_ast *raiz, t_pipex *p)
+void	files_in_control(t_ast *root)
 {
 	int	i;
 
 	i = 0;
-	redirect_in_error(raiz, p);
-	while (raiz->files[0][i] != NULL)
+	redirect_in_error(root);
+	while (root && root->files[0][i] != NULL)
 	{
-		p->redir_fds[0] = open(raiz->files[0][i], O_RDONLY);
+		root->redir_fds[0] = open(root->files[0][i], O_RDONLY);
 		i++;
 	}
-	return (p->redir_fds[0]);
+	return ;
 }

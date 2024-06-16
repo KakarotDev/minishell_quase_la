@@ -6,13 +6,11 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 17:36:08 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/23 17:25:47 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/16 04:04:36 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	sighandler(int);
 
 void	receive_sig_int_heredoc(int sig)
 {
@@ -43,10 +41,12 @@ int	after_prompt(int is_after)
 
 void	receive_sig_int(int sig)
 {
+	if (!is_process(-1))
+		ft_putstr_fd("\n", STDOUT_FILENO);
 	rl_on_new_line();
 	rl_replace_line("", 0);
-	ft_putstr_fd("\n", STDOUT_FILENO);
-	rl_redisplay();
+	if (!after_prompt(-1))
+		rl_redisplay();
 	last_exit_status(128 + sig);
 }
 

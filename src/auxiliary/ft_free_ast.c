@@ -14,28 +14,30 @@
 
 void	free_tokens(t_dlist *tokens)
 {
+	free(tokens->tok->heredoc_file);
 	free(tokens->tok->lex);
 	free(tokens->tok);
 	free(tokens);
 }
 
-void	closing_process(t_pipex *p, t_ast *raiz)
+void	closing_process(t_ast *root)
 {
-	if (p->redir_fds[0] != 0)
-		close(p->redir_fds[0]);
-	if (p->redir_fds[1] != 0)
-		close(p->redir_fds[1]);
-	ft_free_matrix_char(p->paths.mat_path);
-	free(p);
-	ft_free_ast(raiz->first);
+	if (root->redir_fds[0] != 0)
+		close(root->redir_fds[0]);
+	if (root->redir_fds[1] != 0)
+		close(root->redir_fds[1]);
+	ft_free_ast(root->first_leaf);
 	hook_environ(NULL, 1);
 	hook_pwd(NULL, 1);
-	exit(0);
+	close(STDIN_FILENO);
+	close(STDERR_FILENO);
+	close(STDOUT_FILENO);
+	exit(last_exit_status(-1));
 }
 
 void	free_right(t_ast *right)
 {
-	ft_free_matrix_char(right->cmd);
+	ft_free_matrix_char(right->cmd_matrix);
 	free(right->path);
 	if (right->files[0])
 		ft_free_matrix_char(right->files[0]);
@@ -45,20 +47,20 @@ void	free_right(t_ast *right)
 		ft_free_matrix_char(right->files[2]);
 	free(right->files);
 	right->files = NULL;
-	right->cmd = NULL;
+	right->cmd_matrix = NULL;
 	right->path = NULL;
 }
 
 void	ft_free_ast(t_ast *root)
 {
-	if (root->esq != NULL)
-		ft_free_ast(root->esq);
+	if (root->left != NULL)
+		ft_free_ast(root->left);
 	else
 		free_right(root);
-	if (root->dir != NULL)
+	if (root->right != NULL)
 	{
-		free_right(root->dir);
-		free(root->dir);
+		free_right(root->right);
+		free(root->right);
 	}
 	free(root);
 }

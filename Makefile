@@ -102,7 +102,7 @@ CFILES += $(addprefix $(AUXILIARY)/, is_an_address.c go_to.c ft_close_fds.c ft_h
 	ft_free_matrix.c ft_have_char.c ft_have_op.c ft_is_redirect.c ft_open_fd.c ft_open_fork.c ft_print_ast.c ft_print_dlist.c \
 	ft_print_matrix.c ft_strndup.c get_ret_process.c hook_environ.c last_exit_status.c syntax_error.c hook_pwd.c set_entrance.c \
 	skip_single_quotes.c validating_varname.c ft_isspace.c ft_getenv.c ft_strcmp.c ft_matrix_count.c handling_pipe.c \
-	its_in_heredoc.c heredoc_file_counter.c received_sigint_in_heredoc.c)
+	its_in_heredoc.c heredoc_file_counter.c received_sigint_in_heredoc.c is_process.c)
 CFILES += $(addprefix $(BUILTINS)/, cd.c export.c echo.c pwd.c env.c export_utils.c exit.c unset.c)
 CFILES += $(addprefix $(DLST_PROCEDURES)/, ft_add_next.c ft_append_dlist.c ft_cpy_dlst.c ft_cpy_node.c ft_dlist_delete_from.c \
 	ft_dlist_have_type.c ft_dlist_last_occur.c ft_dlst_last.c ft_newnode_dlist.c)

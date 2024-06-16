@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 int	last_exit_status(int exit_status)
 {
 	static int	status;

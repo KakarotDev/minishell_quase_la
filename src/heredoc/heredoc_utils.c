@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:40:19 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/29 18:35:30 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 02:05:23 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ void	handling_heredoc(t_dlist **head, char **lexemes, int *i)
 	return ;
 }
 
-int	received_sigint(int *fds)
+int	received_sigint(int *fds, char *input)
 {
 	if (last_exit_status(-1) == 130)
 	{
 		dup2(fds[1], STDIN_FILENO);
+		free(input);
 		return (TRUE);
 	}
 	return (FALSE);

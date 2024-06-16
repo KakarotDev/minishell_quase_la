@@ -16,10 +16,10 @@ int	ft_have_op(char *input)
 {
 	if (!ft_strncmp(input, "<<", 2)
 		|| !ft_strncmp(input, ">>", 2))
-		return (1);
+		return (TRUE);
 	else if (!ft_strncmp(input, "<", 1)
 		|| !ft_strncmp(input, ">", 1)
 		|| !ft_strncmp(input, "|", 1))
-		return (1);
-	return (0);
+		return (TRUE);
+	return (FALSE);
 }

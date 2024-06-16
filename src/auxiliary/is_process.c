@@ -1,27 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   hook_environ.c                                     :+:      :+:    :+:   */
+/*   is_process.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/01 18:43:48 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/16 04:12:25 by myokogaw         ###   ########.fr       */
+/*   Created: 2024/06/16 01:47:58 by myokogaw          #+#    #+#             */
+/*   Updated: 2024/06/16 04:06:47 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-char	**hook_environ(char **envp, int free)
+int	is_process(int consult_or_change)
 {
-	static char		**static_envp;
+	static int	boolean_val;
 
-	if (!static_envp && envp)
-		static_envp = envp;
-	if (static_envp && free)
-	{
-		ft_free_matrix((void **) static_envp);
-		static_envp = NULL;
-	}
-	return (static_envp);
+	if (consult_or_change != -1)
+		boolean_val = consult_or_change;
+	return (boolean_val);
 }

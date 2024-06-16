@@ -3,134 +3,145 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/13 19:43:07 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 05:36:40 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast	*cria_arvore(t_dlist **t, t_pipex *p)
+t_ast	*create_ast(t_dlist **tokens)
 {
-	t_ast	*raiz;
-	t_ast	*esq;
+	t_ast	*root;
+	t_ast	*left;
 	t_dlist	*aux;
 	int		i;
 
-	i = t[0]->pipes;
-	aux = t[0];
-	raiz = NULL;
+	i = tokens[0]->pipes;
+	aux = tokens[0];
+	root = NULL;
 	while (i >= 0)
 	{
 		if (i > 0)
 		{
-			esq = cria_no_arv(aux, p, i, t[0]->pipes);
-			aux = free_chunk_list(t[0]);
-			raiz = adiciona_no(raiz, esq);
+			left = create_pipe_leaf(aux);
+			aux = free_chunk_list(tokens[0]);
+			root = append_leaf(root, left);
 		}
 		else
 		{
-			esq = cria_no_cmd(aux, p, i, t[0]->pipes);
-			aux = free_chunk_list(t[0]);
-			raiz = adiciona_no(raiz, esq);
+			left = create_cmd_leaf(aux);
+			aux = free_chunk_list(tokens[0]);
+			root = append_leaf(root, left);
 		}
 		i--;
 	}
-	return (raiz);
+	return (root);
 }
 
-void	execv_pipes(t_ast *root, t_pipex *p)
+void	execv_pipes(t_ast *root)
 {
-	p->f_id_grandchild = fork();
-	if (p->f_id_grandchild == 0)
+	int	pid;
+
+	pid = fork();
+	if (pid == 0)
 	{
-		if (p->redir_fds[1] != 0)
+		if (root->redir_fds[1] != 0)
 		{
-			dup2(p->redir_fds[1], STDOUT_FILENO);
-			close(p->redir_fds[1]);
+			dup2(root->redir_fds[1], STDOUT_FILENO);
+			close(root->redir_fds[1]);
 		}
-		if (p->redir_fds[0] != 0)
+		if (root->redir_fds[0] != 0)
 		{
-			dup2(p->redir_fds[0], STDIN_FILENO);
-			close(p->redir_fds[0]);
+			dup2(root->redir_fds[0], STDIN_FILENO);
+			close(root->redir_fds[0]);
 		}
-		if (execve(root->path, root->cmd, hook_environ(NULL, 0)) == -1)
-			exit(last_exit_status(-1));
+		signal(SIGQUIT, SIG_DFL);
+		if (execve(root->path, root->cmd_matrix, hook_environ(NULL, 0)) == -1)
+			execve_error_exit(root);
 	}
-	waitpid(p->f_id_grandchild, NULL, 0);
+	last_exit_status(get_ret_process(pid));
 }
 
-void	exec_cmd(t_ast *raiz, t_pipex *p)
+void	exec_cmd(t_ast *root)
 {
 	int		exit_status;
 
-	redir_fds_control(raiz, p);
-	if (*raiz->cmd && (builtins_checker(raiz) < 0))
+	redir_fds_control(root);
+	if (*root->cmd_matrix && (builtins_checker(root) < 0))
 	{
-		exit_status = command_not_found(raiz->path, raiz->cmd);
-		if (!exit_status && raiz->path && **raiz->cmd)
-			execv_pipes(raiz, p);
+		exit_status = command_not_found(root->path, root->cmd_matrix);
+		if (!exit_status && root->path && **root->cmd_matrix)
+			execv_pipes(root);
 	}
-	else
-		exit_status = builtins_caller(raiz, p, 0);
+	else if (*root->cmd_matrix)
+		builtins_caller(root);
 }
 
-void	tree_exec(t_ast *raiz, t_pipex *p, int fd)
+void	manage_pipes_fd(int *pipe_fds, int side)
 {
-	if (pipe(p->pipe_fd) == -1)
+	if (side == LEFT)
+		dup2(pipe_fds[1], STDOUT_FILENO);
+	else if (side == RIGHT)
+		dup2(pipe_fds[0], STDIN_FILENO);
+	close(pipe_fds[0]);
+	close(pipe_fds[1]);
+}
+
+void	tree_exec_termination(int pipe_fds[2], int forks[2])
+{
+	close(pipe_fds[0]);
+	close(pipe_fds[1]);
+	get_ret_process(forks[0]);
+	last_exit_status(get_ret_process(forks[1]));
+}
+
+void	tree_exec_pipe_procedure(t_ast *root, int pipe_fds[2])
+{
+	is_process(TRUE);
+	root->left->first_leaf = root->first_leaf;
+	manage_pipes_fd(pipe_fds, LEFT);
+	tree_exec(root->left);
+	closing_process(root);
+}
+
+void	tree_exec(t_ast *root)
+{
+	int	pipe_fds[2];
+	int	forks[2];
+
+	if (pipe(pipe_fds) == -1)
 		return ;
-	if (raiz->esq->type == PIPE)
+	if (root->left->type == PIPE)
 	{
-		p->f_id_left = fork();
-		if (p->f_id_left == 0)
-		{
-			raiz->esq->first = raiz->first;
-			dup2(p->pipe_fd[1], STDOUT_FILENO);
-			close(p->pipe_fd[1]);
-			close(p->pipe_fd[0]);
-			tree_exec(raiz->esq, p, fd);
-			closing_process(p, raiz);
-		}
-		p->f_id_right = fork();
-		if (p->f_id_right == 0)
-		{
-			standard_command_organizer(raiz, p);
-			closing_process(p, raiz);
-		}
+		forks[0] = fork();
+		if (forks[0] == 0)
+			tree_exec_pipe_procedure(root, pipe_fds);
+		forks[1] = fork();
+		if (forks[1] == 0)
+			command_organizer(root, pipe_fds, RIGHT);
 	}
 	else
 	{
-		p->f_id_left = fork();
-		if (p->f_id_left == 0)
-		{
-			first_command_organizer(raiz, p);
-		}
-		p->f_id_right = fork();
-		if (p->f_id_right == 0)
-		{
-			standard_command_organizer(raiz, p);
-			closing_process(p, raiz);
-		}
+		forks[0] = fork();
+		if (forks[0] == 0)
+			command_organizer(root, pipe_fds, LEFT);
+		forks[1] = fork();
+		if (forks[1] == 0)
+			command_organizer(root, pipe_fds, RIGHT);
 	}
-	close(p->pipe_fd[1]);
-	close(p->pipe_fd[0]);
-	waitpid(p->f_id_left, NULL, 0);
-	waitpid(p->f_id_right, NULL, 0);
+	tree_exec_termination(pipe_fds, forks);
 }
 
 void	ast_function(t_dlist **tokens)
 {
-	t_pipex	*p;
-
-	tokens[0]->pipes = have_pipe(tokens[0]);
-	p = (t_pipex *)ft_calloc(sizeof(t_pipex), 1);
+	tokens[0]->pipes = pipe_count(tokens[0]);
 	expansion(tokens);
 	quote_removal(tokens);
-	get_paths(p);
 	if (tokens[0]->pipes > 0)
-		brothers_functions(tokens, p);
+		brothers_functions(tokens);
 	else
-		only_child_functions(tokens, p);
+		only_child_functions(tokens);
 }

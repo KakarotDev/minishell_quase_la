@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 16:00:01 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/17 11:37:50 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/16 04:06:23 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ int	unset(char **args)
 
 	i = 0;
 	environ = hook_environ(NULL, 0);
-	printf("quantity of elements in env matrix %d\n", ft_matrix_count(environ));
 	while (args[++i])
 	{
 		if (!is_varname_valid(args[i], environ))
@@ -98,7 +97,6 @@ int	unset(char **args)
 		{
 			remaking_env_unset(args[i], environ);
 			environ = hook_environ(NULL, 0);
-			printf("quantity of elements in env matrix %d\n", ft_matrix_count(environ));
 		}
 	}
 	return (EXIT_SUCCESS);

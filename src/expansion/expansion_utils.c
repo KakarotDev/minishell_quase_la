@@ -64,22 +64,37 @@ void	renewing_token(t_dlist *tok)
 	{
 		if (!lexs[i + 1])
 			new = dealing_with_last_lexeme(lexs[i], new, tok, i);
-		else
+		else if (tok->tok->type == IO_FILE)
 			new = ft_add_next(new,
-					ft_newnode_dlist(lexs[i], 6, tok->tok->metadata), i);
+					ft_newnode_dlist(lexs[i], IO_FILE, tok->tok->metadata), i);
+		else if (tok->tok->type == ASSIGNMENT_WORD)
+			new = ft_add_next(new,
+					ft_newnode_dlist(lexs[i], WORD, tok->tok->metadata), i);
 		i++;
 	}
 	if (!lexs[i] && i == 0)
-		new = ft_add_next(new, ft_newnode_dlist(NULL, 6, NULL), i);
+		new = ft_add_next(new, ft_newnode_dlist(NULL, WORD, NULL), i);
 	ft_free_matrix((void **) lexs);
 	return ;
 }
 
 t_dlist	*dealing_with_last_lexeme(char *lex, t_dlist *new, t_dlist *tok, int i)
 {
-	if (!has_expansion(lex, &tok->tok->metadata[0], &tok->tok->metadata[2]))
-		new = ft_add_next(new, ft_newnode_dlist(lex, 6, tok->tok->metadata), i);
-	else
-		new = ft_add_next(new, ft_newnode_dlist(lex, 7, tok->tok->metadata), i);
+	int	expansion_bool;
+
+	expansion_bool = has_expansion(lex,
+			&tok->tok->metadata[0], &tok->tok->metadata[2]);
+	if (expansion_bool && tok->tok->type == IO_FILE)
+		new = ft_add_next(new,
+				ft_newnode_dlist(lex, IO_FILE, tok->tok->metadata), i);
+	else if (tok->tok->type == IO_FILE)
+		new = ft_add_next(new,
+				ft_newnode_dlist(lex, IO_FILE, tok->tok->metadata), i);
+	else if (expansion_bool && tok->tok->type == ASSIGNMENT_WORD)
+		new = ft_add_next(new,
+				ft_newnode_dlist(lex, ASSIGNMENT_WORD, tok->tok->metadata), i);
+	else if (tok->tok->type == ASSIGNMENT_WORD)
+		new = ft_add_next(new,
+				ft_newnode_dlist(lex, WORD, tok->tok->metadata), i);
 	return (new);
 }

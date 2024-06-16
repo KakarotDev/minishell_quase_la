@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:55:41 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/14 20:23:48 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 01:31:15 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	parser(t_dlist **tokens)
 		ft_destructor_struct(tokens);
 		return ;
 	}
-	if (parser_validation(tokens) == 2)
+	if (parser_validation(tokens) == SYNTAX_ERROR)
 	{
-		last_exit_status(2);
+		last_exit_status(SYNTAX_ERROR);
 		return ;
 	}
 	ast_function(tokens);

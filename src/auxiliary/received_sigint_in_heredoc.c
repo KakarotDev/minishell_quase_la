@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 int	received_sigint_in_heredoc(int status)
 {
 	static int	received;

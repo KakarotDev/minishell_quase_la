@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 int	its_in_heredoc(int it_is)
 {
 	static int	heredoc;

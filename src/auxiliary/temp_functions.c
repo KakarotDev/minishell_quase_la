@@ -3,21 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   temp_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 17:33:18 by parthur-          #+#    #+#             */
-/*   Updated: 2024/05/09 17:14:02 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 04:14:04 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-size_t	matrix_len(char **mat)
+long int	matrix_len(char **mat)
 {
-	int	i;
+	long int	i;
 
 	i = 0;
-	while (mat[i] != NULL)
+	while (mat[i] != (void *)0)
 		i++;
 	return (i);
 }

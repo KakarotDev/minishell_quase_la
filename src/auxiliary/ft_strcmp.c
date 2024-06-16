@@ -6,11 +6,9 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 13:45:16 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/13 13:45:56 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/16 04:09:06 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 int	ft_strcmp(const char *s1, const char *s2)
 {

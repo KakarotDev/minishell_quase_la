@@ -3,29 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_caller.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:00:17 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/14 19:44:58 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 01:55:27 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	save_fd_for_builtins(t_pipex *p, int control)
+void	save_fd_for_builtins(t_ast *root, int control)
 {
+	static int	fd_stdout;
+
 	if (control == 0)
 	{
-		if (p->redir_fds[1] != 0)
+		fd_stdout = dup(STDOUT_FILENO);
+		if (root->redir_fds[1] != 0)
 		{
-			dup2(p->redir_fds[1], STDOUT_FILENO);
-			close(p->redir_fds[1]);
+			dup2(root->redir_fds[1], STDOUT_FILENO);
+			close(root->redir_fds[1]);
 		}
 	}
-	if (control == 1)
+	else if (control == 1)
 	{
-		if (p->redir_fds[1] != 0)
-			dup2(p->save_fd[1], STDOUT_FILENO);
+		if (!is_process(-1))
+		{
+			if (root->redir_fds[1] != 0)
+				dup2(fd_stdout, STDOUT_FILENO);
+		}
+		close(fd_stdout);
 	}
 }
 
@@ -34,48 +41,43 @@ int	builtins_checker(t_ast *root)
 	int	exit_status;
 
 	exit_status = -1;
-	if (!ft_strncmp(root->cmd[0], "echo", ft_strlen(root->cmd[0])))
+	if (!ft_strcmp(root->cmd_matrix[0], "echo"))
 		exit_status = 1;
-	else if (!ft_strncmp(root->cmd[0], "export", ft_strlen(root->cmd[0])))
+	else if (!ft_strcmp(root->cmd_matrix[0], "export"))
 		exit_status = 1;
-	else if (!ft_strncmp(root->cmd[0], "cd", ft_strlen(root->cmd[0])))
+	else if (!ft_strcmp(root->cmd_matrix[0], "cd"))
 		exit_status = 1;
-	else if (!ft_strncmp(root->cmd[0], "env", ft_strlen(root->cmd[0])))
+	else if (!ft_strcmp(root->cmd_matrix[0], "env"))
 		exit_status = 1;
-	else if (!ft_strncmp(root->cmd[0], "pwd", ft_strlen(root->cmd[0])))
+	else if (!ft_strcmp(root->cmd_matrix[0], "pwd"))
 		exit_status = 1;
-	else if (!ft_strncmp(root->cmd[0], "exit", ft_strlen(root->cmd[0])))
+	else if (!ft_strcmp(root->cmd_matrix[0], "exit"))
 		exit_status = 1;
-	else if (!ft_strncmp(root->cmd[0], "unset", ft_strlen(root->cmd[0])))
+	else if (!ft_strcmp(root->cmd_matrix[0], "unset"))
 		exit_status = 1;
 	return (exit_status);
 }
 
-int	builtins_caller(t_ast *root, t_pipex *p, int control)
+void	builtins_caller(t_ast *root)
 {
 	int	exit_status;
 
-	exit_status = -1;
-	p->save_fd[1] = dup(STDOUT_FILENO);
-	save_fd_for_builtins(p, 0);
-	if (!ft_strncmp(root->cmd[0], "echo", ft_strlen(root->cmd[0])))
-		exit_status = echo(root->cmd);
-	else if (!ft_strncmp(root->cmd[0], "export", ft_strlen(root->cmd[0])))
-		exit_status = export(root->cmd);
-	else if (!ft_strncmp(root->cmd[0], "cd", ft_strlen(root->cmd[0])))
-		exit_status = cd(root->cmd);
-	else if (!ft_strncmp(root->cmd[0], "env", ft_strlen(root->cmd[0])))
-		exit_status = env(root->cmd);
-	else if (!ft_strncmp(root->cmd[0], "pwd", ft_strlen(root->cmd[0])))
+	exit_status = 0;
+	save_fd_for_builtins(root, 0);
+	if (!ft_strcmp(root->cmd_matrix[0], "echo"))
+		exit_status = echo(root->cmd_matrix);
+	else if (!ft_strcmp(root->cmd_matrix[0], "export"))
+		exit_status = export(root->cmd_matrix);
+	else if (!ft_strcmp(root->cmd_matrix[0], "cd"))
+		exit_status = cd(root->cmd_matrix);
+	else if (!ft_strcmp(root->cmd_matrix[0], "env"))
+		exit_status = env(root->cmd_matrix);
+	else if (!ft_strcmp(root->cmd_matrix[0], "pwd"))
 		exit_status = pwd();
-	else if (!ft_strncmp(root->cmd[0], "exit", ft_strlen(root->cmd[0])))
-		exit_status = builtin_exit(root->cmd);
-	else if (!ft_strncmp(root->cmd[0], "unset", ft_strlen(root->cmd[0])))
-		exit_status = unset(root->cmd);
-	if (control == 1)
-		save_fd_for_builtins(p, 1);
-	close_fds(p->save_fd[1]);
-	if (exit_status != -1)
-		return (last_exit_status(exit_status));
-	return (exit_status);
+	else if (!ft_strcmp(root->cmd_matrix[0], "exit"))
+		exit_status = builtin_exit(root->cmd_matrix);
+	else if (!ft_strcmp(root->cmd_matrix[0], "unset"))
+		exit_status = unset(root->cmd_matrix);
+	save_fd_for_builtins(root, 1);
+	last_exit_status(exit_status);
 }

@@ -14,7 +14,7 @@
 
 static int	ft_isword(t_dlist **head, char *lexeme)
 {
-	int	metadata[3];
+	int	metadata[4];
 
 	ft_memset(metadata, 0, sizeof(metadata));
 	if (ft_have_char(lexeme, '$'))
@@ -37,7 +37,7 @@ static int	ft_isword(t_dlist **head, char *lexeme)
 
 static int	ft_isop(t_dlist **head, char **lexemes, int *i)
 {
-	int		data[3];
+	int		data[4];
 	int		start;
 
 	start = *i;
@@ -56,7 +56,8 @@ static int	ft_isop(t_dlist **head, char **lexemes, int *i)
 		return (FALSE);
 	if (start == *i && ft_strncmp(lexemes[*i], "|", 1))
 	{
-		if (lexemes[++(*i)])
+		has_expansion(lexemes[++(*i)], &data[0], &data[2]);
+		if (lexemes[*i])
 			ft_append_dlist(head, ft_newnode_dlist(lexemes[*i], IO_FILE, data));
 	}
 	return (TRUE);
@@ -104,8 +105,9 @@ int	has_expansion(char *lex, int *index, int *is_quoted)
 		else
 			*index += 1;
 	}
-	if (lex[*index] == '$')
+	if (lex[*index] == '$' && ft_isalnum(lex[*index]))
 		return (TRUE);
+	*index = -1;
 	return (FALSE);
 }
 

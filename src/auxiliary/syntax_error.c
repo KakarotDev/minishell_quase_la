@@ -20,5 +20,5 @@ int	syntax_error(int type, t_dlist **tokens)
 		ft_putstr_fd("Error\n Syntax error an unclosed quoted\n", 2);
 	else if (type == UNEXPECTED)
 		ft_putstr_fd("Error\n Syntax error unexpected token\n", 2);
-	return (2);
+	return (SYNTAX_ERROR);
 }

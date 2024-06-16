@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 int	heredoc_file_counter(int filenum)
 {
 	static int	current;

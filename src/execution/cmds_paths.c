@@ -3,89 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_paths.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:09:03 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/03 19:13:35 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 04:07:22 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	get_paths(t_pipex *p)
+char	**get_paths(void)
 {
-	int		i;
-	char	*temp;
-	char	**envp;
+	int		index;
+	char	*temp_string;
+	char	*paths_string;
+	char	**paths_matrix;
 
-	i = 0;
-	envp = hook_environ(NULL, 0);
-	while (ft_strncmp("PATH", envp[i], 4) != 0)
-		i++;
-	p->paths.init_path = ft_strdup(envp[i] + 5);
-	i = 0;
-	p->paths.mat_path = ft_split(p->paths.init_path, ':');
-	free(p->paths.init_path);
-	p->paths.mat_len = matrix_len(p->paths.mat_path);
-	while (i < p->paths.mat_len)
+	index = 0;
+	paths_string = ft_getenv("PATH");
+	if (!paths_string)
+		return (NULL);
+	paths_matrix = ft_split(paths_string, ':');
+	free(paths_string);
+	while (paths_matrix[index])
 	{
-		temp = ft_strjoin(p->paths.mat_path[i], "/");
-		free(p->paths.mat_path[i]);
-		p->paths.mat_path[i] = temp;
-		i++;
+		temp_string = ft_strjoin(paths_matrix[index], "/");
+		free(paths_matrix[index]);
+		paths_matrix[index] = temp_string;
+		index++;
 	}
+	return (paths_matrix);
 }
 
-char	*cria_path(t_dlist *tokens, t_pipex *p)
+char	*create_path(t_dlist *tokens)
 {
-	t_dlist	*aux_t;
-	int		i;
+	t_dlist	*aux;
 	char	*path;
+	char	**paths_matrix;
+	int		i;
 
-	aux_t = tokens;
 	i = 0;
-	aux_t = go_to_pipe_or_first(aux_t);
-	aux_t = go_to_first_word(aux_t);
-	if (ft_strchr(aux_t->tok->lex, '/'))
-		return (ft_strdup(aux_t->tok->lex));
-	while (p->paths.mat_path[i] != NULL && aux_t->tok->type == WORD)
+	aux = tokens;
+	aux = go_to_pipe_or_first(aux);
+	aux = go_to_first_word(aux);
+	if (ft_strchr(aux->tok->lex, '/'))
+		return (ft_strdup(aux->tok->lex));
+	paths_matrix = get_paths();
+	while (paths_matrix[i] != NULL && aux->tok->type == WORD)
 	{
-		path = ft_strjoin(p->paths.mat_path[i++], aux_t->tok->lex);
+		path = ft_strjoin(paths_matrix[i], aux->tok->lex);
 		if (access(path, X_OK) == 0)
+		{
+			ft_free_matrix((void **) paths_matrix);
 			return (path);
+		}
 		free(path);
+		i++;
 	}
+	ft_free_matrix((void **) paths_matrix);
 	return (NULL);
 }
 
 char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
 {
-	char	**mat_exc;
+	char	**cmd_matrix;
 	int		i;
 
 	i = 0;
-	mat_exc = ft_calloc(sizeof(char *), mat_exec_len);
+	cmd_matrix = ft_calloc(sizeof(char *), mat_exec_len);
 	while (tokens != NULL)
 	{
 		if (tokens->tok->type == WORD)
 		{
-			if (ft_strchr(tokens->tok->lex, '/'))
-			{
-				if (access(tokens->tok->lex, X_OK) == 0)
-					mat_exc[i] = is_an_address(tokens->tok->lex);
-				else
-					mat_exc[i] = ft_strdup(tokens->tok->lex);
-			}
-			else
-				mat_exc[i] = ft_strdup(tokens->tok->lex);
+			cmd_matrix[i] = ft_strdup(tokens->tok->lex);
 			i++;
 		}
 		tokens = tokens->next;
 	}
-	return (mat_exc);
+	return (cmd_matrix);
 }
 
-char	**cria_mat_cmds(t_dlist *tokens)
+char	**create_cmd_matrix(t_dlist *tokens)
 {
 	t_dlist	*aux;
 	char	**mat_exc;
@@ -107,24 +105,18 @@ char	**cria_mat_cmds(t_dlist *tokens)
 	return (mat_exc);
 }
 
-t_ast	*cria_no_cmd(t_dlist *tokens, t_pipex *p, int i, int t)
+t_ast	*create_cmd_leaf(t_dlist *tokens)
 {
-	t_ast	*no_cmd;
+	t_ast	*cmd_leaf;
 
-	no_cmd = (t_ast *)malloc(sizeof(t_ast));
-	no_cmd->type = WORD;
-	no_cmd->esq = NULL;
-	no_cmd->dir = NULL;
-	no_cmd->path = cria_path(tokens, p);
-	no_cmd->cmd = cria_mat_cmds(tokens);
-	no_cmd->files = have_redirect(tokens);
-	no_cmd->r_fds.r_fd_in = 0;
-	no_cmd->r_fds.r_fd_out = 0;
-	if (i == t)
-		no_cmd->index = 3;
-	else if (i == 0)
-		no_cmd->index = 1;
-	else
-		no_cmd->index = 2;
-	return (no_cmd);
+	cmd_leaf = (t_ast *) malloc(sizeof(t_ast));
+	cmd_leaf->type = WORD;
+	cmd_leaf->left = NULL;
+	cmd_leaf->right = NULL;
+	cmd_leaf->path = create_path(tokens);
+	cmd_leaf->cmd_matrix = create_cmd_matrix(tokens);
+	cmd_leaf->files = have_redirect(tokens);
+	cmd_leaf->redir_fds[0] = 0;
+	cmd_leaf->redir_fds[1] = 0;
+	return (cmd_leaf);
 }

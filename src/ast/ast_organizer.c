@@ -3,84 +3,93 @@
 /*                                                        :::      ::::::::   */
 /*   ast_organizer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/13 19:52:15 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/16 05:38:12 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	first_command_organizer(t_ast *raiz, t_pipex *p)
+// void	first_command_organizer(t_ast *root, int pipe_fds[2])
+// {
+// 	manage_pipes_fd(pipe_fds, LEFT);
+// 	exec_cmd(root);
+// 	closing_process(root);
+// }
+
+void	command_organizer(t_ast *root, int pipe_fds[2], int side)
 {
-	dup2(p->pipe_fd[1], STDOUT_FILENO);
-	close(p->pipe_fd[1]);
-	close(p->pipe_fd[0]);
-	exec_cmd(raiz->esq, p);
-	closing_process(p, raiz);
+	is_process(TRUE);
+	if (side == LEFT)
+	{
+		root->left->first_leaf = root->first_leaf;
+		manage_pipes_fd(pipe_fds, LEFT);
+		exec_cmd(root->left);
+		closing_process(root->left);
+	}
+	else if (side == RIGHT)
+	{
+		root->right->first_leaf = root->first_leaf;
+		manage_pipes_fd(pipe_fds, RIGHT);
+		exec_cmd(root->right);
+		closing_process(root->right);
+	}
 }
 
-void	standard_command_organizer(t_ast *raiz, t_pipex *p)
+void	brothers_functions(t_dlist **tokens)
 {
-	dup2(p->pipe_fd[0], STDIN_FILENO);
-	close(p->pipe_fd[1]);
-	close(p->pipe_fd[0]);
-	exec_cmd(raiz->dir, p);
-}
+	t_ast	*root;
 
-void	brothers_functions(t_dlist **tokens, t_pipex *p)
-{
-	t_ast	*raiz;
-
-	raiz = cria_arvore(tokens, p);
+	root = create_ast(tokens);
+	root->first_leaf = root;
 	free(tokens);
-	raiz->first = raiz;
-	tree_exec(raiz, p, STDOUT_FILENO);
-	closing_father(p, raiz);
+	tree_exec(root);
+	ft_free_ast(root);
 }
 
-int	execv_only_child(t_ast *root, t_pipex *p)
+void	execv_only_child(t_ast *root)
 {
-	int	exit_status;
 	int	pid;
 
 	pid = fork();
-	exit_status = 0;
 	if (pid == 0)
 	{
-		if (p->redir_fds[1] != 0)
+		is_process(TRUE);
+		if (root->redir_fds[1] != 0)
 		{
-			dup2(p->redir_fds[1], STDOUT_FILENO);
-			close(p->redir_fds[1]);
+			dup2(root->redir_fds[1], STDOUT_FILENO);
+			close(root->redir_fds[1]);
 		}		
-		if (p->redir_fds[0] != 0)
+		if (root->redir_fds[0] != 0)
 		{
-			dup2(p->redir_fds[0], STDIN_FILENO);
-			close(p->redir_fds[0]);
+			dup2(root->redir_fds[0], STDIN_FILENO);
+			close(root->redir_fds[0]);
 		}
-		execve(root->path, root->cmd, hook_environ(NULL, 0));
-		execve_error_exit(root);
+		signal(SIGQUIT, SIG_DFL);
+		if (execve(root->path, root->cmd_matrix, hook_environ(NULL, 0)))
+			execve_error_exit(root);
 	}
-	waitpid(pid, &exit_status, 0);
-	return (exit_status);
+	last_exit_status(get_ret_process(pid));
 }
 
-void	only_child_functions(t_dlist **tokens, t_pipex *p)
+void	only_child_functions(t_dlist **tokens)
 {
 	t_ast	*root;
 	int		exit_status;
 
-	root = cria_no_cmd(*tokens, p, 0, 0);
-	redir_fds_control(root, p);
-	if (*root->cmd && (builtins_checker(root) < 0))
+	root = create_cmd_leaf(*tokens);
+	redir_fds_control(root);
+	if (!root)
+		return ;
+	if (*root->cmd_matrix && (builtins_checker(root) < 0))
 	{
-		exit_status = command_not_found(root->path, root->cmd);
-		if (!exit_status && root->path && **root->cmd)
-			exit_status = execv_only_child(root, p);
+		exit_status = command_not_found(root->path, root->cmd_matrix);
+		if (!exit_status && root->path && **root->cmd_matrix)
+			execv_only_child(root);
 	}
-	else
-		builtins_caller(root, p, 1);
-	closing_only_child(p, root, tokens[0]);
-	free(tokens);
+	else if (*root->cmd_matrix)
+		builtins_caller(root);
+	closing_only_child(root, tokens);
 }

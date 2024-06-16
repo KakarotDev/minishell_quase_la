@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 void	skip_single_quotes(char *lexeme, int *position)
 {
 	*position += 1;

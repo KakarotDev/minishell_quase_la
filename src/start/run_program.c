@@ -3,33 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   run_program.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:01:47 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/14 20:25:12 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/15 20:37:44 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	term_properties(int restore)
-// {
-// 	static struct termios	term;
-
-// 	if (!restore)
-// 		tcgetattr(STDIN_FILENO, &term);
-// 	else
-// 		tcsetattr(STDIN_FILENO, TCSANOW, &term);
-// }
-
-void	init_environ(void)
+static void	init_environ(void)
 {
 	hook_environ(copy_environ(), 0);
 	hook_pwd(catch_cwd(), 0);
 	handle_signal();
 }
 
-char	*call_readline(void)
+static char	*call_readline(void)
 {
 	char	*input;
 	char	*entrance;
