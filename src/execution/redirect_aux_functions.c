@@ -75,12 +75,12 @@ char	**have_append(t_dlist *tokens)
 	return (appends);
 }
 
-void	files_out_control(t_ast *root)
+int	files_out_control(t_ast *root)
 {
 	int	i;
 
 	i = 0;
-	while (root->files[1][i] != NULL)
+	while (root && root->files[1][i] != NULL)
 	{
 		if (root->files[2] != NULL)
 		{
@@ -98,24 +98,24 @@ void	files_out_control(t_ast *root)
 			root->redir_fds[1] = open(root->files[1][i],
 					O_WRONLY | O_CREAT | O_TRUNC, 0000666);
 		}
-		redirect_out_error(root);
-		if (!root)
-			break ;
+		if (redirect_out_error(root))
+			return (EXIT_FAILURE);
 		i++;
 	}
-	return ;
+	return (EXIT_SUCCESS);
 }
 
-void	files_in_control(t_ast *root)
+int	files_in_control(t_ast *root)
 {
 	int	i;
 
 	i = 0;
-	redirect_in_error(root);
-	while (root && root->files[0][i] != NULL)
+	if (redirect_in_error(root))
+		return (EXIT_FAILURE);
+	while (root->files[0][i] != NULL)
 	{
 		root->redir_fds[0] = open(root->files[0][i], O_RDONLY);
 		i++;
 	}
-	return ;
+	return (EXIT_SUCCESS);
 }

@@ -12,16 +12,28 @@
 
 #include "minishell.h"
 
-void	redir_fds_control(t_ast *root)
+int	redir_fds_control(t_ast *root)
 {
+	int	status;
+
+	status = 0;
 	if (root->files[0] != NULL)
-		files_in_control(root);
+	{
+		status = files_in_control(root);
+		if (status)
+			return (EXIT_FAILURE);
+	}
 	else
 		root->redir_fds[0] = 0;
-	if (root && root->files[1] != NULL)
-		files_out_control(root);
+	if (!status && root->files[1] != NULL)
+	{
+		status = files_out_control(root);
+		if (status)
+			return (EXIT_FAILURE);
+	}
 	else
 		root->redir_fds[1] = 0;
+	return (EXIT_SUCCESS);
 }
 
 char	**creat_file_mat(t_dlist *tokens, int result, enum e_type type,

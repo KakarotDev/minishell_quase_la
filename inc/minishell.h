@@ -262,17 +262,17 @@ char	**create_cmd_matrix(t_dlist *tokens);
 char	**tokens_to_args(t_ast *leaf);
 char	**get_paths(void);
 char	*its_a_address(char *lex);
-void	files_out_control(t_ast *root);
-void	files_in_control(t_ast *root);
 void	handle_pipe(t_ast *leaf);
 void	execution(t_ast **ast);
 void	execve_error_exit(t_ast *root);
-void	redir_fds_control(t_ast *raiz);
 void	manage_pipes_fd(int *pipe_fds, int side);
+int		redir_fds_control(t_ast *root);
+int		files_out_control(t_ast *root);
+int		files_in_control(t_ast *root);
 t_ast	*create_cmd_leaf(t_dlist *tokens);
 
 // Exec errors
-void	redirect_in_error(t_ast *root);
-void	redirect_out_error(t_ast *root);
+int		redirect_in_error(t_ast *root);
+int		redirect_out_error(t_ast *root);
 
 #endif

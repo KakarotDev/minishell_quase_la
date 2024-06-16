@@ -90,11 +90,19 @@ char	**get_all_lexemes(char *file)
 	return (all_lexemes);
 }
 
+int	ft_isexpansion(int c)
+{
+	if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') \
+	|| (c >= 'a' && c <= 'z') || c == '_' || c == '?')
+		return (1);
+	return (0);
+}
+
 int	has_expansion(char *lex, int *index, int *is_quoted)
 {
 	while (lex[*index])
 	{
-		if (lex[*index] == '$')
+		if (lex[*index] == '$' && (ft_isexpansion(lex[*index + 1])))
 			break ;
 		if (lex[*index] == '\"' && !(*is_quoted))
 			*is_quoted = TRUE;
@@ -105,7 +113,7 @@ int	has_expansion(char *lex, int *index, int *is_quoted)
 		else
 			*index += 1;
 	}
-	if (lex[*index] == '$' && ft_isalnum(lex[*index]))
+	if (lex[*index] == '$')
 		return (TRUE);
 	*index = -1;
 	return (FALSE);

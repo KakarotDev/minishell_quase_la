@@ -17,16 +17,16 @@ void	write_err_msg_redirect(char	*file, enum e_error error)
 	char	*str_error;
 
 	if (error == MINI_EISDIR)
-		str_error = strerror(MINI_EISDIR);
+		str_error = "Is a directory\n";
 	else if (error == MINI_EACCES)
-		str_error = strerror(MINI_EACCES);
+		str_error = "Permission denied\n";
 	else if (error == NOFILE)
 		str_error = "No such file or directory\n";
 	ft_putstr_fd("(", STDERR_FILENO);
 	ft_putstr_fd(file, STDERR_FILENO);
 	ft_putstr_fd("): ", STDERR_FILENO);
 	ft_putstr_fd(str_error, STDERR_FILENO);
-	last_exit_status(1);
+	last_exit_status(EXIT_FAILURE);
 }
 
 // void	printf_message(t_ast *raiz, int i, int type)
@@ -39,10 +39,10 @@ void	write_err_msg_redirect(char	*file, enum e_error error)
 // 		printf("unwritable_file: Permission denied %s\n", raiz->files[1][i]);
 // }
 
-void	closing_process_message(t_ast *root, int *index, enum e_error error)
+void	closing_process_message(t_ast *root, int index_files, int *index, enum e_error error)
 {
-	write_err_msg_redirect(root->files[1][*index], error);
-	if (root->redir_fds[0] != 0)
+	write_err_msg_redirect(root->files[index_files][*index], error);
+	if (root->redir_fds[0] != 0 && root->redir_fds[0] != -1)
 		close(root->redir_fds[0]);
 	if (root->redir_fds[1] != 0)
 		close(root->redir_fds[1]);
@@ -54,13 +54,13 @@ void	closing_process_message(t_ast *root, int *index, enum e_error error)
 		close(STDOUT_FILENO);
 		hook_environ(NULL, 1);
 		hook_pwd(NULL, 1);
-		exit (1);
+		exit(last_exit_status(-1));
 	}
 	root = NULL;
 	*index = -2;
 }
 
-void	redirect_in_error(t_ast *root)
+int	redirect_in_error(t_ast *root)
 {
 	int	index;
 
@@ -68,14 +68,17 @@ void	redirect_in_error(t_ast *root)
 	while (index != -1 && root->files[0][index] != NULL)
 	{
 		if (access(root->files[0][index], F_OK) == -1)
-			closing_process_message(root, &index, NOFILE);
+			closing_process_message(root, 0, &index, NOFILE);
 		else if (access(root->files[0][index], R_OK) == -1)
-			closing_process_message(root, &index, MINI_EACCES);
+			closing_process_message(root, 0, &index, MINI_EACCES);
 		index++;
 	}
+	if (index == -1)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
-void	redirect_out_error(t_ast *root)
+int	redirect_out_error(t_ast *root)
 {
 	int	index;
 	int	fd;
@@ -86,11 +89,14 @@ void	redirect_out_error(t_ast *root)
 		fd = open(root->files[1][index], __O_DIRECTORY);
 		if (fd != -1)
 		{
-			closing_process_message(root, &index, MINI_EISDIR);
+			closing_process_message(root, 1, &index, MINI_EISDIR);
 			close(fd);
 		}
 		else if ((access(root->files[1][index], W_OK) != 0))
-			closing_process_message(root, &index, MINI_EACCES);
+			closing_process_message(root, 1, &index, MINI_EACCES);
 		index++;
 	}
+	if (index == -1)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
