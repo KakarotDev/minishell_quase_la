@@ -129,6 +129,7 @@ void	ft_close_fds(void);
 void	close_fds(int fd_max);
 void	skip_single_quotes(char *lexeme, int *position);
 void	handling_pipe(t_dlist **head, char **lexemes, int *index);
+void	write_err_msg(char *msg, enum e_error error);
 int		ft_open_fd(char *path, int flags);
 int		ft_have_char(char *str, char c);
 int		ft_have_op(char *input);
@@ -215,7 +216,7 @@ int		check_pipes(t_dlist **tokens);
 
 // Handle error
 int		syntax_error(int type, t_dlist **tokens);
-int		command_not_found(char *path, char **matrix);
+int		path_validation(char *path, char **matrix);
 
 // Parser
 void	parser(t_dlist **tokens);

@@ -8,3 +8,7 @@ de comando funciona
 5 - pegar a saida do processo final, last_exit_status(get_ret_process(pid_right));
 6 - tratar sinais para a execução
 7 - implementar a expansão turbinada 
+8 - Validação de comando
+
+permissão de execução 
+permissão 

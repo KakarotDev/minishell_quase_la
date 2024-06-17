@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_caller.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:00:17 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/16 01:55:27 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/16 19:33:00 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	save_fd_for_builtins(t_ast *root, int control)
 		if (root->redir_fds[1] != 0)
 		{
 			dup2(root->redir_fds[1], STDOUT_FILENO);
-			close(root->redir_fds[1]);
+			root->redir_fds[1] = close(root->redir_fds[1]);
 		}
 	}
 	else if (control == 1)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_aux_functions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/11 23:24:33 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/16 01:28:52 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/16 19:35:16 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 
 void	closing_only_child(t_ast *root, t_dlist **tokens)
 {
+	if (root->redir_fds[0] > 0)
+		close(root->redir_fds[0]);
+	if (root->redir_fds[1] > 0)
+		close(root->redir_fds[1]);
 	ft_free_ast(root);
 	free_chunk_list(*tokens);
 	free(tokens);

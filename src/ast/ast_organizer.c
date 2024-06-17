@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_organizer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/16 17:00:30 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/16 20:28:38 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	only_child_functions(t_dlist **tokens)
 	}
 	if (*root->cmd_matrix && (builtins_checker(root) < 0))
 	{
-		exit_status = command_not_found(root->path, root->cmd_matrix);
+		exit_status = path_validation(root->path, root->cmd_matrix);
 		if (!exit_status && root->path && **root->cmd_matrix)
 			execv_only_child(root);
 	}

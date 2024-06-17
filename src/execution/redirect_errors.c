@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	write_err_msg_redirect(char	*file, enum e_error error)
+void	write_err_msg(char *msg, enum e_error error)
 {
 	char	*str_error;
 
@@ -23,30 +23,20 @@ void	write_err_msg_redirect(char	*file, enum e_error error)
 	else if (error == NOFILE)
 		str_error = "No such file or directory\n";
 	ft_putstr_fd("(", STDERR_FILENO);
-	ft_putstr_fd(file, STDERR_FILENO);
+	ft_putstr_fd(msg, STDERR_FILENO);
 	ft_putstr_fd("): ", STDERR_FILENO);
 	ft_putstr_fd(str_error, STDERR_FILENO);
 	last_exit_status(EXIT_FAILURE);
 }
 
-// void	printf_message(t_ast *raiz, int i, int type)
-// {
-// 	if (type == 1)
-// 		printf("No such file or directory: %s\n", raiz->files[0][i]);
-// 	if (type == 2)
-// 		printf("unreadable_file: Permission denied %s\n", raiz->files[0][i]);
-// 	if (type == 3)	
-// 		printf("unwritable_file: Permission denied %s\n", raiz->files[1][i]);
-// }
-
 void	closing_process_message(t_ast *root, int index_files, int *index, enum e_error error)
 {
-	write_err_msg_redirect(root->files[index_files][*index], error);
+	write_err_msg(root->files[index_files][*index], error);
 	if (root->redir_fds[0] != 0 && root->redir_fds[0] != -1)
 		close(root->redir_fds[0]);
-	if (root->redir_fds[1] != 0)
+	if (root->redir_fds[1] > 0)
 		close(root->redir_fds[1]);
-	ft_free_ast(root); 
+	ft_free_ast(root);
 	if (is_process(-1))
 	{
 		close(STDIN_FILENO);

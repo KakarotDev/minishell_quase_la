@@ -107,7 +107,7 @@ CFILES += $(addprefix $(BUILTINS)/, cd.c export.c echo.c pwd.c env.c export_util
 CFILES += $(addprefix $(DLST_PROCEDURES)/, ft_add_next.c ft_append_dlist.c ft_cpy_dlst.c ft_cpy_node.c ft_dlist_delete_from.c \
 	ft_dlist_have_type.c ft_dlist_last_occur.c ft_dlst_last.c ft_newnode_dlist.c)
 CFILES += $(addprefix $(ENVIRONMENT)/, copy_environ.c read_var.c)
-CFILES += $(addprefix $(ERRORS)/, command_not_found.c)
+CFILES += $(addprefix $(ERRORS)/, path_validation.c)
 CFILES += $(addprefix $(EXECUTION)/, redirect_errors.c redirect_aux_functions.c redirect.c cmds_paths.c builtins_caller.c)
 CFILES += $(addprefix $(EXPANSIONS)/, expansion.c expansion_utils.c quote_removal.c)
 CFILES += $(addprefix $(LEXER)/, lexer.c generate_tokens.c quote_validation.c)
