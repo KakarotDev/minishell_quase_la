@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:02:51 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/17 02:53:55 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/17 18:32:49 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,6 @@ char	**partial_path_mat_creator(char *path)
 		}
 		i++;
 	}
-	i = 0;
-	while (mat[i] != NULL)
-	{
-		printf("%s\n", mat[i]);
-		i++;
-	}
-	printf("\n");
 	return (mat);
 }
 
@@ -85,13 +78,9 @@ int	path_validation(char *path, char **matrix)
 	char	**mat_partial_paths;
 	int		i;
 	int		dir_fd;
-	int		ret_access_exec;
-	int		ret_access_file;
 
 	i = 0;
 	dir_fd = 0;
-	ret_access_exec = 0;
-	ret_access_file = 0;
 	mat_partial_paths = NULL;
 	if (path)
 	{
@@ -99,14 +88,13 @@ int	path_validation(char *path, char **matrix)
 		while (mat_partial_paths[i + 1])
 		{
 			dir_fd = open(mat_partial_paths[i], __O_DIRECTORY);
-			if (dir_fd > 0)
+			if (dir_fd < 0)
 			{
 				write_err_msg(path, NOFILE);
 				close(dir_fd);
 				return (last_exit_status(EXIT_FAILURE));
 			}
-			ret_access_exec = access(mat_partial_paths[i], X_OK);
-			if (ret_access_exec < 0)
+			if (access(mat_partial_paths[i], X_OK) < 0)
 			{
 				write_err_msg(path, MINI_EACCES);
 				return (last_exit_status(EXIT_FAILURE));
@@ -123,17 +111,18 @@ int	path_validation(char *path, char **matrix)
 		}
 		else
 		{
-			ret_access_file = access(path, F_OK);
-			if (ret_access_file < 0)
+			if (access(path, F_OK) < 0)
 			{
 				write_err_msg(path, NOFILE);
 				return (last_exit_status(EXIT_FAILURE));
 			}
+			else if (access(path, X_OK) < 0)
+			{
+				write_err_msg(path, MINI_EACCES);
+				return (last_exit_status(EXIT_FAILURE));
+			}
 		}
-		printf("\n");
 	}
-	// if (aux_path_validation(path))
-	// 	return (EXIT_FAILURE);
 	if (path == NULL)
 	{
 		ft_putstr_fd(matrix[0], STDERR_FILENO);
