@@ -3,125 +3,135 @@
 /*                                                        :::      ::::::::   */
 /*   path_validation.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:02:51 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/17 18:32:49 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/18 15:42:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	aux_path_validation(char *path)
-{
-	int	ret;
-	int	fd;
-
-	if (path == NULL)
-		return (EXIT_SUCCESS);
-	ret = access(path, F_OK);
-	if (ret < 0)
-	{
-		write_err_msg(path, NOFILE);
-		return (last_exit_status(EXIT_FAILURE));
-	}
-	fd = open(path, __O_DIRECTORY);
-	if (fd > 0)
-	{
-		write_err_msg(path, MINI_EISDIR);
-		close(fd);
-		return (last_exit_status(EXIT_FAILURE));
-	}
-	ret = access(path, X_OK);
-	if (ret < 0)
-	{
-		write_err_msg(path, MINI_EACCES);
-		return (last_exit_status(EXIT_FAILURE));
-	}	
-	return (EXIT_SUCCESS);
-}
+//int	aux_path_validation(char *path)
+//{
+//	int	ret;
+//	int	fd;
+//
+//	if (path == NULL)
+//		return (EXIT_SUCCESS);
+//	ret = access(path, F_OK);
+//	if (ret < 0)
+//	{
+//		write_err_msg(path, NOFILE);
+//		return (last_exit_status(EXIT_FAILURE));
+//	}
+//	fd = open(path, __O_DIRECTORY);
+//	if (fd > 0)
+//	{
+//		write_err_msg(path, MINI_EISDIR);
+//		close(fd);
+//		return (last_exit_status(EXIT_FAILURE));
+//	}
+//	ret = access(path, X_OK);
+//	if (ret < 0)
+//	{
+//		write_err_msg(path, MINI_EACCES);
+//		return (last_exit_status(EXIT_FAILURE));
+//	}	
+//	return (EXIT_SUCCESS);
+//}
 
 char	**partial_path_mat_creator(char *path)
 {
-	int		len;
 	int		i;
 	int		mat_len;
 	int		i_mat;
 	char	**mat;
 
-	i = 0;
+	i = -1;
 	i_mat = 0;
-	len = ft_strlen(path);
 	mat_len = 0;
-	while (path[i] != '\0')
+	while (path[++i] != '\0')
 	{
 		if (path[i] == '/')
 			mat_len++;
-		i++;
 	}
 	mat = (char **)ft_calloc(sizeof(char *), (mat_len + 2));
-	i = 0;
-	while (path[i] != '\0')
+	i = -1;
+	while (path[++i] != '\0')
 	{
 		if (path[i + 1] == '/' || path[i + 1] == '\0')
 		{
 			mat[i_mat] = ft_strndup(path, 0, (i + 1));
 			i_mat++;
 		}
-		i++;
 	}
 	return (mat);
 }
 
-int	path_validation(char *path, char **matrix)
+int	checking_the_path_except_the_last_one(char *path)
 {
 	char	**mat_partial_paths;
-	int		i;
 	int		dir_fd;
+	int		i;
 
 	i = 0;
-	dir_fd = 0;
 	mat_partial_paths = NULL;
-	if (path)
+	mat_partial_paths = partial_path_mat_creator(path);
+	while (mat_partial_paths[i + 1])
 	{
-		mat_partial_paths = partial_path_mat_creator(path);
-		while (mat_partial_paths[i + 1])
+		dir_fd = open(mat_partial_paths[i], __O_DIRECTORY);
+		if (dir_fd < 0)
 		{
-			dir_fd = open(mat_partial_paths[i], __O_DIRECTORY);
-			if (dir_fd < 0)
-			{
-				write_err_msg(path, NOFILE);
-				close(dir_fd);
-				return (last_exit_status(EXIT_FAILURE));
-			}
-			if (access(mat_partial_paths[i], X_OK) < 0)
-			{
-				write_err_msg(path, MINI_EACCES);
-				return (last_exit_status(EXIT_FAILURE));
-			}
-			i++;
-		}
-		i++;
-		dir_fd = open(path, __O_DIRECTORY);
-		if (dir_fd > 0)
-		{
-			write_err_msg(path, MINI_EISDIR);
+			write_err_msg(path, NOFILE);
 			close(dir_fd);
 			return (last_exit_status(EXIT_FAILURE));
 		}
-		else
+		if (access(mat_partial_paths[i], X_OK) < 0)
 		{
-			if (access(path, F_OK) < 0)
-			{
-				write_err_msg(path, NOFILE);
-				return (last_exit_status(EXIT_FAILURE));
-			}
-			else if (access(path, X_OK) < 0)
-			{
-				write_err_msg(path, MINI_EACCES);
-				return (last_exit_status(EXIT_FAILURE));
-			}
+			write_err_msg(path, MINI_EACCES);
+			return (last_exit_status(EXIT_FAILURE));
 		}
+		i++;
+	}
+	return (EXIT_SUCCESS);
+}
+
+int	checking_the_last_one(char *path)
+{
+	int	dir_fd;
+
+	dir_fd = open(path, __O_DIRECTORY);
+	if (dir_fd > 0)
+	{
+		write_err_msg(path, MINI_EISDIR);
+		close(dir_fd);
+		return (last_exit_status(EXIT_FAILURE));
+	}
+	else
+	{
+		if (access(path, F_OK) < 0)
+		{
+			write_err_msg(path, NOFILE);
+			return (last_exit_status(EXIT_FAILURE));
+		}
+		else if (access(path, X_OK) < 0)
+		{
+			write_err_msg(path, MINI_EACCES);
+			return (last_exit_status(EXIT_FAILURE));
+		}
+	}
+	return (EXIT_SUCCESS);
+}
+
+int	path_validation(char *path, char **matrix)
+{
+	if (path)
+	{
+		if (checking_the_path_except_the_last_one(path) == 1)
+			return (EXIT_FAILURE);
+		if (checking_the_last_one(path) == 1)
+			return (EXIT_FAILURE);
 	}
 	if (path == NULL)
 	{
