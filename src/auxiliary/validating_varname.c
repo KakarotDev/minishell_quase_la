@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	*validating_varname(char *varname, int *is_quoted)
+char	*validating_varname(char *varname, long int *is_quoted)
 {
 	if (*is_quoted)
 	{

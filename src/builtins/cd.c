@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:58:57 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/05 20:17:19 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:44:33 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ void	update_environment(void)
 	matrix[0] = NULL;
 	matrix[1] = ft_strjoin("OLD_PWD=", hook_pwd(NULL, 0));
 	matrix[2] = NULL;
-	export(matrix);
+	builtin_export(matrix);
 	free(matrix[1]);
 	hook_pwd(NULL, 1);
 	hook_pwd(catch_cwd(), 0);
 	matrix[1] = ft_strjoin("PWD=", hook_pwd(NULL, 0));
-	export(matrix);
+	builtin_export(matrix);
 	free(matrix[1]);
 	return ;
 }

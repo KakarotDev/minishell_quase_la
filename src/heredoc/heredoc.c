@@ -57,8 +57,8 @@ static char	*formatting_heredoc_file(void)
 
 static void	write_to_heredoc_file(char *input, int fd, char bool_expansion)
 {
-	t_dlist	*temp;
-	int		metadata[3];
+	t_dlist		*temp;
+	long int	metadata[4];
 
 	ft_memset(metadata, 0, sizeof(metadata));
 	if (ft_have_char(input, '$') && bool_expansion == '1')

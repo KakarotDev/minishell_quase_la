@@ -14,6 +14,8 @@
 
 void	free_tokens(t_dlist *tokens)
 {
+	if (tokens->tok->metadata[3] != 0)
+		free((char *) tokens->tok->metadata[3]);
 	free(tokens->tok->heredoc_file);
 	free(tokens->tok->lex);
 	free(tokens->tok);
@@ -45,6 +47,8 @@ void	free_right(t_ast *right)
 		ft_free_matrix_char(right->files[1]);
 	if (right->files[2])
 		ft_free_matrix_char(right->files[2]);
+	if (right->files[3])
+		ft_free_matrix_char(right->files[3]);
 	free(right->files);
 	right->files = NULL;
 	right->cmd_matrix = NULL;

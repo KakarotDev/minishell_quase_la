@@ -21,7 +21,7 @@ char	*getting_variable(char *varname)
 	return (read_var(hook_environ(NULL, 0), varname));
 }
 
-char	*getting_varname(char *lexeme, int expansion_metadata[])
+char	*getting_varname(char *lexeme, long int *expansion_metadata)
 {
 	expansion_metadata[1] = expansion_metadata[0]++;
 	if (!ft_isalpha(lexeme[expansion_metadata[0]])
@@ -53,48 +53,67 @@ char	*getting_content(char *var)
 
 void	renewing_token(t_dlist *tok)
 {
-	t_dlist	*new;
-	char	**lexs;
-	int		i;
+	t_dlist		*new;
+	char		**lexs;
+	long int	metadata[4];
+	int			i;
 
 	i = 0;
 	new = tok;
 	lexs = get_all_lexemes("/tmp/.merge_token");
+	ft_memset(metadata, 0, sizeof(metadata));
+	metadata[0] = -1;
 	while (lexs[i])
 	{
 		if (!lexs[i + 1])
 			new = dealing_with_last_lexeme(lexs[i], new, tok, i);
 		else if (tok->tok->type == IO_FILE)
+		{
+			if (i == 0)
+				metadata[3] = tok->tok->metadata[3];
 			new = ft_add_next(new,
-					ft_newnode_dlist(lexs[i], IO_FILE, tok->tok->metadata), i);
+					ft_newnode_dlist(lexs[i], IO_FILE, metadata), i);
+			if (i == 0)
+				metadata[3] = 0;
+		}
 		else if (tok->tok->type == ASSIGNMENT_WORD)
 			new = ft_add_next(new,
-					ft_newnode_dlist(lexs[i], WORD, tok->tok->metadata), i);
+					ft_newnode_dlist(lexs[i], WORD, metadata), i);
 		i++;
 	}
-	if (!lexs[i] && i == 0)
-		new = ft_add_next(new, ft_newnode_dlist(NULL, WORD, NULL), i);
+	if (!lexs[i] && i == 0 && tok->tok->type == WORD)
+	{
+		tok->tok->metadata[0] = -1;
+		new = ft_add_next(new, ft_newnode_dlist("", WORD, tok->tok->metadata), i);
+	}
+	else if (i == 0 && tok->tok->type == IO_FILE)
+	{
+		tok->tok->metadata[0] = -1;
+		new = ft_add_next(new, ft_newnode_dlist(NULL, IO_FILE, tok->tok->metadata), i);
+	}
 	ft_free_matrix((void **) lexs);
 	return ;
 }
 
 t_dlist	*dealing_with_last_lexeme(char *lex, t_dlist *new, t_dlist *tok, int i)
 {
-	int	expansion_bool;
+	int			expansion_bool;
+	long int	metadata[4];
 
+	ft_memset(metadata, 0, sizeof(metadata));
 	expansion_bool = has_expansion(lex,
-			&tok->tok->metadata[0], &tok->tok->metadata[2]);
+			&metadata[0], &metadata[2]);
 	if (expansion_bool && tok->tok->type == IO_FILE)
 		new = ft_add_next(new,
-				ft_newnode_dlist(lex, IO_FILE, tok->tok->metadata), i);
+				ft_newnode_dlist(lex, IO_FILE, metadata), i);
 	else if (tok->tok->type == IO_FILE)
 		new = ft_add_next(new,
-				ft_newnode_dlist(lex, IO_FILE, tok->tok->metadata), i);
+				ft_newnode_dlist(lex, IO_FILE, metadata), i);
 	else if (expansion_bool && tok->tok->type == ASSIGNMENT_WORD)
 		new = ft_add_next(new,
-				ft_newnode_dlist(lex, ASSIGNMENT_WORD, tok->tok->metadata), i);
+				ft_newnode_dlist(lex, ASSIGNMENT_WORD, metadata), i);
 	else if (tok->tok->type == ASSIGNMENT_WORD)
 		new = ft_add_next(new,
-				ft_newnode_dlist(lex, WORD, tok->tok->metadata), i);
+				ft_newnode_dlist(lex, WORD, metadata), i);
 	return (new);
 }

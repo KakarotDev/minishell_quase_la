@@ -14,7 +14,7 @@
 
 static int	ft_isword(t_dlist **head, char *lexeme)
 {
-	int	metadata[4];
+	long int	metadata[4];
 
 	ft_memset(metadata, 0, sizeof(metadata));
 	if (ft_have_char(lexeme, '$'))
@@ -37,8 +37,8 @@ static int	ft_isword(t_dlist **head, char *lexeme)
 
 static int	ft_isop(t_dlist **head, char **lexemes, int *i)
 {
-	int		data[4];
-	int		start;
+	long int	data[4];
+	int			start;
 
 	start = *i;
 	ft_memset(data, 0, sizeof(data));
@@ -98,7 +98,7 @@ int	ft_isexpansion(int c)
 	return (0);
 }
 
-int	has_expansion(char *lex, int *index, int *is_quoted)
+int	has_expansion(char *lex, long int *index, long int *is_quoted)
 {
 	while (lex[*index])
 	{

@@ -3,43 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   path_validation.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:02:51 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/18 15:42:22 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/18 21:49:14 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-//int	aux_path_validation(char *path)
-//{
-//	int	ret;
-//	int	fd;
-//
-//	if (path == NULL)
-//		return (EXIT_SUCCESS);
-//	ret = access(path, F_OK);
-//	if (ret < 0)
-//	{
-//		write_err_msg(path, NOFILE);
-//		return (last_exit_status(EXIT_FAILURE));
-//	}
-//	fd = open(path, __O_DIRECTORY);
-//	if (fd > 0)
-//	{
-//		write_err_msg(path, MINI_EISDIR);
-//		close(fd);
-//		return (last_exit_status(EXIT_FAILURE));
-//	}
-//	ret = access(path, X_OK);
-//	if (ret < 0)
-//	{
-//		write_err_msg(path, MINI_EACCES);
-//		return (last_exit_status(EXIT_FAILURE));
-//	}	
-//	return (EXIT_SUCCESS);
-//}
 
 char	**partial_path_mat_creator(char *path)
 {
@@ -69,6 +40,23 @@ char	**partial_path_mat_creator(char *path)
 	return (mat);
 }
 
+int	close_and_return(char *path, char **mat_partial_paths, int control)
+{
+	if (control == 0)
+	{
+		write_err_msg(path, NOFILE);
+		ft_free_matrix_char(mat_partial_paths);
+		return (last_exit_status(EXIT_FAILURE));
+	}
+	else if (control == 1)
+	{
+		write_err_msg(path, MINI_EACCES);
+		ft_free_matrix_char(mat_partial_paths);
+		return (last_exit_status(EXIT_FAILURE));
+	}
+	return (0);
+}
+
 int	checking_the_path_except_the_last_one(char *path)
 {
 	char	**mat_partial_paths;
@@ -82,18 +70,13 @@ int	checking_the_path_except_the_last_one(char *path)
 	{
 		dir_fd = open(mat_partial_paths[i], __O_DIRECTORY);
 		if (dir_fd < 0)
-		{
-			write_err_msg(path, NOFILE);
-			close(dir_fd);
-			return (last_exit_status(EXIT_FAILURE));
-		}
+			return (close_and_return(path, mat_partial_paths, 0));
+		close(dir_fd);
 		if (access(mat_partial_paths[i], X_OK) < 0)
-		{
-			write_err_msg(path, MINI_EACCES);
-			return (last_exit_status(EXIT_FAILURE));
-		}
+			return (close_and_return(path, mat_partial_paths, 1));
 		i++;
 	}
+	ft_free_matrix_char(mat_partial_paths);
 	return (EXIT_SUCCESS);
 }
 

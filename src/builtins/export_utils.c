@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 20:07:55 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/14 14:54:48 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/17 23:21:50 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	report_error_export(void)
 {
 	ft_putstr_fd("Error\n export: not a valid identifier\n", 2);
-	return (1);
+	return (EXIT_FAILURE);
 }
 
 void	format_and_print_export(char *variable)

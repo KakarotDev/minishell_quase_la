@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:24 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/23 17:29:19 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:46:02 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,32 +32,28 @@ int	validate_argument(const char *arg)
 	return (TRUE);
 }
 
-int	builtin_exit(char **matrix)
+int	builtin_exit(t_ast *root, int *stdout_fd)
 {
 	short int	arg;
 	int			index;
 
 	arg = -1;
 	index = 1;
-	while (matrix[index])
+	while (root->cmd_matrix[index])
 	{
-		if (matrix[index][0] && arg == -1)
+		if (root->cmd_matrix[index][0] && arg == -1)
 		{
-			if (!validate_argument(matrix[index]))
+			if (!validate_argument(root->cmd_matrix[index]))
 			{
 				ft_putstr_fd("exit\n", 2);
 				ft_putstr_fd("Error\n exit: numeric argument required\n", 2);
-				hook_environ(NULL, 1);
-				hook_pwd(NULL, 1);
-				ft_free_matrix((void **) matrix);
-				close(STDIN_FILENO);
-				close(STDOUT_FILENO);
-				close(STDERR_FILENO);
-				exit(2);
+				close(*stdout_fd);
+				last_exit_status(2);
+				closing_process(root);
 			}
-			arg = ft_atoi(matrix[index]);
+			arg = ft_atoi(root->cmd_matrix[index]);
 		}
-		else if (arg != -1 && matrix[index][0] != '\0')
+		else if (arg != -1 && root->cmd_matrix[index][0] != '\0')
 		{
 			ft_putstr_fd("exit\n", 2);
 			ft_putstr_fd("Error\n exit: too many arguments\n", 2);
@@ -68,24 +64,15 @@ int	builtin_exit(char **matrix)
 	if (arg != -1)
 	{
 		ft_putstr_fd("exit\n", 2);
-		hook_environ(NULL, 1);
-		hook_pwd(NULL, 1);
-		ft_free_matrix((void **) matrix);
-		close(STDIN_FILENO);
-		close(STDOUT_FILENO);
-		close(STDERR_FILENO);
-		exit(arg);
+		last_exit_status(arg);
+		close(*stdout_fd);
+		closing_process(root);
 	}
 	else if (arg == -1)
 	{
 		ft_putstr_fd("exit\n", 2);
-		hook_environ(NULL, 1);
-		hook_pwd(NULL, 1);
-		ft_free_matrix((void **) matrix);
-		close(STDIN_FILENO);
-		close(STDOUT_FILENO);
-		close(STDERR_FILENO);
-		exit(last_exit_status(-1));
+		close(*stdout_fd);
+		closing_process(root);
 	}
 	return (0);
 }

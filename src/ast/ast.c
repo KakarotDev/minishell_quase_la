@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/18 14:50:34 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/18 20:39:07 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	execv_pipes(t_ast *root)
 		}
 		signal(SIGQUIT, SIG_DFL);
 		if (execve(root->path, root->cmd_matrix, hook_environ(NULL, 0)) == -1)
-			execve_error_exit(root);
+			execve_error_exit(root->first_leaf);
 	}
 	last_exit_status(get_ret_process(pid));
 }
@@ -69,7 +69,8 @@ void	exec_cmd(t_ast *root)
 {
 	int		exit_status;
 
-	redir_fds_control(root);
+	if (redir_fds_control(root))
+		return ;
 	if (*root->cmd_matrix && (builtins_checker(root) < 0))
 	{
 		exit_status = path_validation(root->path, root->cmd_matrix);
@@ -112,6 +113,8 @@ void	tree_exec(t_ast *root)
 	int	pipe_fds[2];
 	int	forks[2];
 
+	forks[0] = 0;
+	forks[1] = 0;
 	if (pipe(pipe_fds) == -1)
 		return ;
 	if (root->left->type == PIPE)

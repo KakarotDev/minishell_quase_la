@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_organizer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/18 15:04:23 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/18 21:34:10 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,18 @@ void	only_child_functions(t_dlist **tokens)
 	int		exit_status;
 
 	root = create_cmd_leaf(*tokens);
-	if (redir_fds_control(root))
+	free_chunk_list(*tokens);
+	free(tokens);
+	if (!redir_fds_control(root))
 	{
-		free_chunk_list(*tokens);
-		free(tokens);
-		return ;
+		if (*root->cmd_matrix && (builtins_checker(root) < 0))
+		{
+			exit_status = path_validation(root->path, root->cmd_matrix);
+			if (!exit_status && root->path && **root->cmd_matrix)
+				execv_only_child(root);
+		}
+		else if (*root->cmd_matrix)
+			builtins_caller(root);
 	}
-	if (*root->cmd_matrix && (builtins_checker(root) < 0))
-	{
-		exit_status = path_validation(root->path, root->cmd_matrix);
-		if (!exit_status && root->path && **root->cmd_matrix)
-			execv_only_child(root);
-	}
-	else if (*root->cmd_matrix)
-		builtins_caller(root);
-	closing_only_child(root, tokens);
+	closing_only_child(root);
 }

@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:36 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/23 17:28:05 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:38:26 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ char	**append_new_variable(char **envp, char *assignment)
 	return (new_env);
 }
 
-int	export(char **matrix)
+int	builtin_export(char **matrix)
 {
 	char	**envp;
 

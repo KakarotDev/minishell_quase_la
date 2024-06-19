@@ -1,0 +1,13 @@
+total 172
+-rw-r--r--  1 parthur- candidate    493 Jun 18 20:28 erros.txt
+-rw-r--r--  1 parthur- candidate      0 Jun 18 21:36 fileout
+drwxr-xr-x  2 parthur- candidate   4096 Jun 18 20:28 inc
+drwxr-xr-x  3 parthur- candidate   4096 Jun 18 20:28 lib
+-rw-r--r--  1 parthur- candidate   5876 Jun 18 20:36 Makefile
+-rwxr-xr-x  1 parthur- candidate 123368 Jun 18 21:35 minishell
+drwxr-xr-x  3 parthur- candidate   4096 Jun 18 21:32 obj
+-rw-r--r--  1 parthur- candidate     38 Jun 18 20:28 out
+drwxr-xr-x 15 parthur- candidate   4096 Jun 18 20:28 src
+-rw-r--r--  1 parthur- candidate     90 Jun 18 20:28 supp.supp
+drwxr-xr-x  3 parthur- candidate   4096 Jun 18 20:52 teste3
+-rw-r--r--  1 parthur- candidate   2794 Jun 18 20:28 testing_expansion.txt

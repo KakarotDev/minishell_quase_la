@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:40:19 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/16 02:05:23 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/18 17:20:24 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	handling_heredoc(t_dlist **head, char **lexemes, int *i)
 {
-	t_dlist	*node;
-	int		metadata[3];
+	t_dlist		*node;
+	long int	metadata[4];
 
 	ft_memset(metadata, 0, sizeof(metadata));
 	node = ft_newnode_dlist(lexemes[*i], H_DOC, metadata);

@@ -50,9 +50,9 @@
 
 enum e_error
 {
-	NOFILE,
-	MINI_EACCES = 13,
-	MINI_EISDIR = 21
+	NOFILE = 3,
+	MINI_EACCES = 167,
+	MINI_EISDIR = 168
 };
 
 enum e_type
@@ -73,7 +73,7 @@ typedef struct s_token {
 	enum e_type		type;
 	char			*lex;
 	char			*heredoc_file;
-	int				metadata[4];
+	long int 		metadata[4];
 }	t_token;
 
 typedef struct s_dlist {
@@ -108,13 +108,14 @@ typedef struct s_pipex
 
 // Auxiliary functions
 char	**hook_environ(char **envp, int free);
+char	*format_string(char *s, char *s1, char *s2, char *s3);
 char	*ft_strndup(char const *s, unsigned int start, size_t len);
 char	*ft_isspace(char *input, int fd);
 char	*get_content_var(char *var);
 char	*catch_cwd(void);
 char	*hook_pwd(char *n_pwd, int to_free);
 char	*set_entrance(void);
-char	*validating_varname(char *varname, int *is_quoted);
+char	*validating_varname(char *varname, long int *is_quoted);
 char	*ft_getenv(char *varname);
 char	*is_an_address(char *lex);
 void	closing_process(t_ast *root);
@@ -124,12 +125,12 @@ void	ft_free_ast(t_ast *root);
 void	ft_free_matrix_char(char **matrix);
 void	ft_free_matrix(void **matrix);
 void	ft_destructor_struct(t_dlist **struct_to_clean);
-void	ft_cpy_array_data(int *dst, int *src, int size);
+void	ft_cpy_array_data(long int *dst, long int *src, int size);
 void	ft_close_fds(void);
 void	close_fds(int fd_max);
-void	skip_single_quotes(char *lexeme, int *position);
+void	skip_single_quotes(char *lexeme, long int *position);
 void	handling_pipe(t_dlist **head, char **lexemes, int *index);
-void	write_err_msg(char *msg, enum e_error error);
+void	write_err_msg(char	*file, enum e_error error);
 int		ft_open_fd(char *path, int flags);
 int		ft_have_char(char *str, char c);
 int		ft_have_op(char *input);
@@ -157,7 +158,7 @@ int		ft_dlist_have_type(t_dlist **tokens, enum e_type type);
 void	ft_dlist_delete_from(t_dlist *start_node);
 void	ft_append_dlist(t_dlist **head, t_dlist *node);
 t_dlist	*ft_dlst_last(t_dlist *node);
-t_dlist	*ft_newnode_dlist(char *lexeme, enum e_type type, int expansion_data[]);
+t_dlist	*ft_newnode_dlist(char *lexeme, enum e_type type, long int *metadata);
 t_dlist	*ft_add_next(t_dlist *token, t_dlist *new_token, int iteration);
 t_dlist	*ft_cpy_node(t_dlist *node);
 t_dlist	*ft_dlist_last_occur(t_dlist **tokens, enum e_type type);
@@ -187,7 +188,7 @@ char	*read_var(char **environment, char *var);
 t_dlist	**lexer(char *input);
 t_dlist	**generate_tokens(char *file);
 char	**get_all_lexemes(char *file);
-int		has_expansion(char *lex, int *index, int *is_quoted);
+int		has_expansion(char *lex, long int *index, long int *is_quoted);
 int		quote_validation(char *input);
 
 // Signal
@@ -200,7 +201,7 @@ void	expansion(t_dlist **tokens);
 void	renewing_token(t_dlist *tok);
 void	send_for_expansion(t_dlist *node);
 char	*getting_variable(char *varname);
-char	*getting_varname(char *lexeme, int expansion_metadata[]);
+char	*getting_varname(char *lexeme, long int *expansion_metadata);
 char	*getting_content(char *var);
 t_dlist	*dealing_with_last_lexeme(char *lex, t_dlist *new, t_dlist *tok, int i);
 
@@ -223,14 +224,14 @@ void	parser(t_dlist **tokens);
 int		parser_validation(t_dlist **tokens);
 
 // AST procedures
-void	exec_cmd(t_ast *raiz);
+void	exec_cmd(t_ast *root);
 void	ast_function(t_dlist **tokens);
 void	tree_exec(t_ast *root);
 void	command_organizer(t_ast *root, int pipe_fds[2], int side);
 void	standard_command_organizer(t_ast *root, int pipe_fds[2]);
 void	first_command_organizer(t_ast *root, int pipe_fds[2]);
 // void	closing_father(t_ast *root);
-void	closing_only_child(t_ast *raiz, t_dlist **tokens);
+void	closing_only_child(t_ast *root);
 void	only_child_functions(t_dlist **tokens);
 void	brothers_functions(t_dlist **tokens);
 t_ast	*create_ast(t_dlist **tokens);
@@ -241,11 +242,11 @@ t_dlist	*free_chunk_list(t_dlist *tokens);
 // Builtins
 int		builtins_checker(t_ast *root);
 int		cd(char **matrix);
-int		export(char **matrix);
+int		builtin_export(char **matrix);
 int		echo(char **matrix);
 int		pwd(void);
 int		env(char **args);
-int		builtin_exit(char **matrix);
+int		builtin_exit(t_ast *root, int *stdout_fd);
 int		report_error_export(void);
 int		show_variables(char **envp);
 int		unset(char **args);
