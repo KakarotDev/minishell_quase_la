@@ -87,12 +87,6 @@ void	send_for_expansion(t_dlist *node)
 	char	*content;
 
 	varname = getting_varname(node->tok->lex, node->tok->metadata);
-	if (!validating_varname(varname, &node->tok->metadata[2]))
-	{
-		if (!has_expansion(node->tok->lex,
-				&node->tok->metadata[0], &node->tok->metadata[2]))
-			return ;
-	}
 	variable = getting_variable(varname);
 	if (ft_have_char(variable, '='))
 		content = getting_content(variable);
@@ -107,23 +101,6 @@ void	send_for_expansion(t_dlist *node)
 	free(content);
 	return ;
 }
-
-// void	check_ambiguous_redirect(t_dlist *tok, t_dlist *next_tok)
-// {
-// 	if (!*tok->tok->lex)
-// 	{
-// 		tok->tok->metadata[3] = 1;
-// 		tok->tok->metadata[0] = -1;
-// 		return ;
-// 	}
-// 	if (tok->next != next_tok)
-// 	{
-// 		tok->tok->metadata[3] = 1;
-// 		tok->tok->metadata[0] = -1;
-// 		return ;
-// 	}
-// 	return ;
-// }
 
 void	expansion(t_dlist **tokens)
 {

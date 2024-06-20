@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:09:03 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/16 04:07:22 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/20 01:32:57 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
 	cmd_matrix = ft_calloc(sizeof(char *), mat_exec_len);
 	while (tokens != NULL)
 	{
-		if (tokens->tok->type == WORD)
+		if (tokens->tok->type == WORD && tokens->tok->lex)
 		{
 			cmd_matrix[i] = ft_strdup(tokens->tok->lex);
 			i++;
@@ -86,23 +86,25 @@ char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
 char	**create_cmd_matrix(t_dlist *tokens)
 {
 	t_dlist	*aux;
-	char	**mat_exc;
-	size_t	mat_exec_len;
+	char	**cmd_matrix;
+	size_t	cmd_matrix_lenght;
 
-	mat_exec_len = 1;
+	cmd_matrix_lenght = 1;
+	if (!tokens)
+		return (NULL);
 	aux = tokens;
 	while (aux->next != NULL)
 		aux = aux->next;
 	while (aux->tok->type != PIPE)
 	{
-		if (aux->tok->type == WORD)
-			mat_exec_len++;
+		if (aux->tok->type == WORD && aux->tok->lex)
+			cmd_matrix_lenght++;
 		if (aux->prev == NULL)
 			break ;
 		aux = aux->prev;
 	}
-	mat_exc = defining_commands(aux, mat_exec_len);
-	return (mat_exc);
+	cmd_matrix = defining_commands(aux, cmd_matrix_lenght);
+	return (cmd_matrix);
 }
 
 t_ast	*create_cmd_leaf(t_dlist *tokens)

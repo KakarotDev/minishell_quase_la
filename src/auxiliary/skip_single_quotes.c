@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-void	skip_single_quotes(char *lexeme, int *position)
+void	skip_single_quotes(char *lexeme, long int *position)
 {
 	*position += 1;
 	while (lexeme[*position] != '\'' && lexeme[*position])
