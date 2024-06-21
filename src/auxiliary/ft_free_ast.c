@@ -22,21 +22,6 @@ void	free_tokens(t_dlist *tokens)
 	free(tokens);
 }
 
-void	closing_process(t_ast *root)
-{
-	if (root->redir_fds[0] != 0)
-		close(root->redir_fds[0]);
-	if (root->redir_fds[1] != 0)
-		close(root->redir_fds[1]);
-	ft_free_ast(root->first_leaf);
-	hook_environ(NULL, 1);
-	hook_pwd(NULL, 1);
-	close(STDIN_FILENO);
-	close(STDERR_FILENO);
-	close(STDOUT_FILENO);
-	exit(last_exit_status(-1));
-}
-
 void	free_right(t_ast *right)
 {
 	ft_free_matrix_char(right->cmd_matrix);

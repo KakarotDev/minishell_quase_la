@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_paths.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:09:03 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/20 01:32:57 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/20 17:35:14 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ char	*create_path(t_dlist *tokens)
 	int		i;
 
 	i = 0;
-	aux = tokens;
-	aux = go_to_pipe_or_first(aux);
-	aux = go_to_first_word(aux);
+	aux = go_to_first_word(tokens);
 	if (ft_strchr(aux->tok->lex, '/'))
 		return (ft_strdup(aux->tok->lex));
 	paths_matrix = get_paths();
-	while (paths_matrix[i] != NULL && aux->tok->type == WORD)
+	if (!paths_matrix)
+		return (NULL);
+	while (paths_matrix[i] != NULL && aux->tok->type == WORD && aux->tok->lex)
 	{
 		path = ft_strjoin(paths_matrix[i], aux->tok->lex);
 		if (access(path, X_OK) == 0)

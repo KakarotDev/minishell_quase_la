@@ -73,7 +73,7 @@ typedef struct s_token {
 	enum e_type		type;
 	char			*lex;
 	char			*heredoc_file;
-	long int 		metadata[4];
+	long int		metadata[4];
 }	t_token;
 
 typedef struct s_dlist {
@@ -94,6 +94,12 @@ typedef struct s_ast
 	int				redir_fds[2];
 	struct s_ast	*first_leaf;
 }	t_ast;
+
+typedef struct s_exec_aux
+{
+	int	pipe_fds[2];
+	int	forks[2];
+}	t_exec_aux;
 
 typedef struct s_pipex
 {
@@ -130,7 +136,7 @@ void	ft_close_fds(void);
 void	close_fds(int fd_max);
 void	skip_single_quotes(char *lexeme, long int *position);
 void	handling_pipe(t_dlist **head, char **lexemes, int *index);
-void	write_err_msg(char	*file, enum e_error error);
+void	write_err_msg(char	*file, enum e_error error, int status_error);
 int		ft_open_fd(char *path, int flags);
 int		ft_have_char(char *str, char c);
 int		ft_have_op(char *input);
@@ -150,6 +156,7 @@ int		heredoc_file_counter(int filenum);
 int		received_sigint_in_heredoc(int status);
 int		is_process(int consult_or_change);
 size_t	matrix_len(char **mat);
+t_dlist	*free_chunk_list(t_dlist *tokens);
 t_dlist	*go_to_pipe_or_first(t_dlist *aux_t);
 t_dlist	*go_to_first_word(t_dlist *tokens);
 
@@ -224,20 +231,20 @@ void	parser(t_dlist **tokens);
 int		parser_validation(t_dlist **tokens);
 
 // AST procedures
-void	exec_cmd(t_ast *root);
-void	ast_function(t_dlist **tokens);
-void	tree_exec(t_ast *root);
+void	tree_exec_pipe_procedure(t_ast *root, int pipe_fds[2]);
 void	command_organizer(t_ast *root, int pipe_fds[2], int side);
 void	standard_command_organizer(t_ast *root, int pipe_fds[2]);
 void	first_command_organizer(t_ast *root, int pipe_fds[2]);
-// void	closing_father(t_ast *root);
+void	tree_exec_termination(int pipe_fds[2], int forks[2]);
+void	execve_error_exit(t_ast *root);
+void	manage_pipes_fd(int *pipe_fds, int side);
 void	closing_only_child(t_ast *root);
 void	only_child_functions(t_dlist **tokens);
 void	brothers_functions(t_dlist **tokens);
+t_ast	*create_cmd_leaf(t_dlist *tokens);
 t_ast	*create_ast(t_dlist **tokens);
 t_ast	*append_leaf(t_ast *raiz, t_ast *no);
 t_ast	*create_pipe_leaf(t_dlist *tokens);
-t_dlist	*free_chunk_list(t_dlist *tokens);
 
 // Builtins
 int		builtins_checker(t_ast *root);
@@ -264,14 +271,15 @@ char	**create_cmd_matrix(t_dlist *tokens);
 char	**tokens_to_args(t_ast *leaf);
 char	**get_paths(void);
 char	*its_a_address(char *lex);
+void	execv_only_child(t_ast *root);
 void	handle_pipe(t_ast *leaf);
 void	execution(t_ast **ast);
-void	execve_error_exit(t_ast *root);
-void	manage_pipes_fd(int *pipe_fds, int side);
+void	exec_cmd(t_ast *root);
+void	ast_function(t_dlist **tokens);
+void	tree_exec(t_ast *root);
 int		redir_fds_control(t_ast *root);
 int		files_out_control(t_ast *root);
 int		files_in_control(t_ast *root);
-t_ast	*create_cmd_leaf(t_dlist *tokens);
 
 // Exec errors
 int		redirect_in_error(t_ast *root);

@@ -1,29 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_aux_functions.c                                :+:      :+:    :+:   */
+/*   ast_creator.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/11 23:24:33 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/18 21:34:17 by parthur-         ###   ########.fr       */
+/*   Created: 2024/06/20 19:05:29 by parthur-          #+#    #+#             */
+/*   Updated: 2024/06/20 19:16:20 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	closing_father(t_ast *root)
-// {
-// 	ft_free_ast(root);
-// }
-
-void	closing_only_child(t_ast *root)
+t_ast	*create_ast(t_dlist **tokens)
 {
-	if (root->redir_fds[0] > 0)
-		close(root->redir_fds[0]);
-	if (root->redir_fds[1] > 0)
-		close(root->redir_fds[1]);
-	ft_free_ast(root);
+	t_ast	*root;
+	t_ast	*left;
+	t_dlist	*aux;
+	int		i;
+
+	i = tokens[0]->pipes;
+	aux = tokens[0];
+	root = NULL;
+	while (i >= 0)
+	{
+		if (i > 0)
+		{
+			left = create_pipe_leaf(aux);
+			aux = free_chunk_list(tokens[0]);
+			root = append_leaf(root, left);
+		}
+		else
+		{
+			left = create_cmd_leaf(aux);
+			aux = free_chunk_list(tokens[0]);
+			root = append_leaf(root, left);
+		}
+		i--;
+	}
+	return (root);
 }
 
 t_ast	*create_pipe_leaf(t_dlist *tokens)
@@ -47,13 +62,4 @@ t_ast	*append_leaf(t_ast *root, t_ast *leaf)
 		return (leaf);
 	root->left = append_leaf(root->left, leaf);
 	return (root);
-}
-
-void	execve_error_exit(t_ast *root)
-{
-	hook_environ(NULL, 1);
-	hook_pwd(NULL, 1);
-	ft_free_ast(root);
-	exit(1);
-	return ;
 }

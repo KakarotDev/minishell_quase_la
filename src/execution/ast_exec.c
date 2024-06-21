@@ -1,44 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast.c                                              :+:      :+:    :+:   */
+/*   ast_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/07 18:00:50 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/18 20:39:07 by parthur-         ###   ########.fr       */
+/*   Created: 2024/06/20 19:06:37 by parthur-          #+#    #+#             */
+/*   Updated: 2024/06/20 19:45:42 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_ast	*create_ast(t_dlist **tokens)
+void	execv_only_child(t_ast *root)
 {
-	t_ast	*root;
-	t_ast	*left;
-	t_dlist	*aux;
-	int		i;
+	int	pid;
 
-	i = tokens[0]->pipes;
-	aux = tokens[0];
-	root = NULL;
-	while (i >= 0)
+	pid = fork();
+	if (pid == 0)
 	{
-		if (i > 0)
+		is_process(TRUE);
+		if (root->redir_fds[1] != 0)
 		{
-			left = create_pipe_leaf(aux);
-			aux = free_chunk_list(tokens[0]);
-			root = append_leaf(root, left);
-		}
-		else
+			dup2(root->redir_fds[1], STDOUT_FILENO);
+			close(root->redir_fds[1]);
+		}		
+		if (root->redir_fds[0] != 0)
 		{
-			left = create_cmd_leaf(aux);
-			aux = free_chunk_list(tokens[0]);
-			root = append_leaf(root, left);
+			dup2(root->redir_fds[0], STDIN_FILENO);
+			close(root->redir_fds[0]);
 		}
-		i--;
+		signal(SIGQUIT, SIG_DFL);
+		if (execve(root->path, root->cmd_matrix, hook_environ(NULL, 0)))
+			execve_error_exit(root);
 	}
-	return (root);
+	last_exit_status(get_ret_process(pid));
 }
 
 void	execv_pipes(t_ast *root)
@@ -81,61 +77,33 @@ void	exec_cmd(t_ast *root)
 		builtins_caller(root);
 }
 
-void	manage_pipes_fd(int *pipe_fds, int side)
-{
-	if (side == LEFT)
-		dup2(pipe_fds[1], STDOUT_FILENO);
-	else if (side == RIGHT)
-		dup2(pipe_fds[0], STDIN_FILENO);
-	close(pipe_fds[0]);
-	close(pipe_fds[1]);
-}
-
-void	tree_exec_termination(int pipe_fds[2], int forks[2])
-{
-	close(pipe_fds[0]);
-	close(pipe_fds[1]);
-	get_ret_process(forks[0]);
-	last_exit_status(get_ret_process(forks[1]));
-}
-
-void	tree_exec_pipe_procedure(t_ast *root, int pipe_fds[2])
-{
-	is_process(TRUE);
-	root->left->first_leaf = root->first_leaf;
-	manage_pipes_fd(pipe_fds, LEFT);
-	tree_exec(root->left);
-	closing_process(root);
-}
-
 void	tree_exec(t_ast *root)
 {
-	int	pipe_fds[2];
-	int	forks[2];
+	t_exec_aux	aux;
 
-	forks[0] = 0;
-	forks[1] = 0;
-	if (pipe(pipe_fds) == -1)
+	aux.forks[0] = 0;
+	aux.forks[1] = 0;
+	if (pipe(aux.pipe_fds) == -1)
 		return ;
 	if (root->left->type == PIPE)
 	{
-		forks[0] = fork();
-		if (forks[0] == 0)
-			tree_exec_pipe_procedure(root, pipe_fds);
-		forks[1] = fork();
-		if (forks[1] == 0)
-			command_organizer(root, pipe_fds, RIGHT);
+		aux.forks[0] = fork();
+		if (aux.forks[0] == 0)
+			tree_exec_pipe_procedure(root, aux.pipe_fds);
+		aux.forks[1] = fork();
+		if (aux.forks[1] == 0)
+			command_organizer(root, aux.pipe_fds, RIGHT);
 	}
 	else
 	{
-		forks[0] = fork();
-		if (forks[0] == 0)
-			command_organizer(root, pipe_fds, LEFT);
-		forks[1] = fork();
-		if (forks[1] == 0)
-			command_organizer(root, pipe_fds, RIGHT);
+		aux.forks[0] = fork();
+		if (aux.forks[0] == 0)
+			command_organizer(root, aux.pipe_fds, LEFT);
+		aux.forks[1] = fork();
+		if (aux.forks[1] == 0)
+			command_organizer(root, aux.pipe_fds, RIGHT);
 	}
-	tree_exec_termination(pipe_fds, forks);
+	tree_exec_termination(aux.pipe_fds, aux.forks);
 }
 
 void	ast_function(t_dlist **tokens)

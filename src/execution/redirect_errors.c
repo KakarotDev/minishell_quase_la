@@ -37,7 +37,7 @@ char	*format_string(char *s, char *s1, char *s2, char *s3)
 	return (formatted_string);
 }
 
-void	write_err_msg(char	*file, enum e_error error)
+void	write_err_msg(char	*file, enum e_error error, int status_error)
 {
 	char	*str_error;
 
@@ -51,37 +51,13 @@ void	write_err_msg(char	*file, enum e_error error)
 	str_error = format_string("(", file, "): ", str_error);
 	ft_putstr_fd(str_error, STDERR_FILENO);
 	free(str_error);
-	last_exit_status(EXIT_FAILURE);
+	last_exit_status(status_error);
 }
 
-// void	printf_message(t_ast *raiz, int i, int type)
-// {
-// 	if (type == 1)
-// 		printf("No such file or directory: %s\n", raiz->files[0][i]);
-// 	if (type == 2)
-// 		printf("unreadable_file: Permission denied %s\n", raiz->files[0][i]);
-// 	if (type == 3)	
-// 		printf("unwritable_file: Permission denied %s\n", raiz->files[1][i]);
-// }
-
-void	closing_process_message(t_ast *root, int index_files, int *index, enum e_error error)
+void	closing_process_message(t_ast *root, int index_files,
+		int *index, enum e_error error)
 {
-	write_err_msg(root->files[index_files][*index], error);
-	// if (root->redir_fds[0] != 0 && root->redir_fds[0] != -1)
-	// 	close(root->redir_fds[0]);
-	// if (root->redir_fds[1] != 0)
-	// 	close(root->redir_fds[1]);
-	// ft_free_ast(root); 
-	// if (is_process(-1))
-	// {
-	// 	close(STDIN_FILENO);
-	// 	close(STDERR_FILENO);
-	// 	close(STDOUT_FILENO);
-	// 	hook_environ(NULL, 1);
-	// 	hook_pwd(NULL, 1);
-	// 	exit(last_exit_status(-1));
-	// }
-	// root = NULL;
+	write_err_msg(root->files[index_files][*index], error, 1);
 	*index = -2;
 }
 
@@ -100,7 +76,8 @@ int	redirect_in_error(t_ast *root)
 	index = 0;
 	while (index != -1 && root->files[0][index] != NULL)
 	{
-		if (ft_atoi(root->files[3][1]) == 0 && ft_atoi(root->files[3][2]) == index)
+		if (ft_atoi(root->files[3][1]) == 0
+			&& ft_atoi(root->files[3][2]) == index)
 		{
 			ft_putstr_fd(root->files[3][0], STDERR_FILENO);
 			index = -2;
@@ -116,6 +93,17 @@ int	redirect_in_error(t_ast *root)
 	return (EXIT_SUCCESS);
 }
 
+// void	redirect_out_error_aux(int fd, int index, t_ast *root)
+// {
+// 	if (fd != -1)
+// 	{
+// 		closing_process_message(root, 1, &index, MINI_EISDIR);
+// 		close(fd);
+// 	}
+// 	else if ((access(root->files[1][index], W_OK) != 0))
+// 		closing_process_message(root, 1, &index, MINI_EACCES);
+// }
+
 int	redirect_out_error(t_ast *root)
 {
 	int	index;
@@ -124,7 +112,8 @@ int	redirect_out_error(t_ast *root)
 	index = 0;
 	while (index != -1 && root->files[1][index] != NULL)
 	{
-		if (ft_atoi(root->files[3][1]) == 1 && ft_atoi(root->files[3][2]) == index)
+		if (ft_atoi(root->files[3][1]) == 1
+			&& ft_atoi(root->files[3][2]) == index)
 		{
 			ft_putstr_fd(root->files[3][0], STDERR_FILENO);
 			index = -2;
@@ -139,6 +128,7 @@ int	redirect_out_error(t_ast *root)
 			}
 			else if ((access(root->files[1][index], W_OK) != 0))
 				closing_process_message(root, 1, &index, MINI_EACCES);
+			//redirect_out_error_aux(fd, index, root);
 		}
 		index++;
 	}

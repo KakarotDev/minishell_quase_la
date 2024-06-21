@@ -67,7 +67,8 @@ char	**creat_file_mat(t_dlist *tokens, int result, enum e_type type,
 	return (mat);
 }
 
-void	ambiguous_redirect_validation(char **matrix_err, t_dlist *tok, int result, int std)
+void	ambiguous_redirect_validation(char **matrix_err, t_dlist *tok,
+		int result, int std)
 {
 	if (tok->next->tok->type == WORD)
 	{
@@ -94,7 +95,7 @@ void	format_error(char **matrix_err, t_dlist *tok, int result, int std)
 	{
 		free(matrix_err[0]);
 		free(matrix_err[1]);
-		matrix_err[0] = format_string("(", 
+		matrix_err[0] = format_string("(",
 				((char *) tok->next->tok->metadata[3]),
 				"): ", "ambiguous redirect\n");
 		matrix_err[1] = ft_itoa(std);
@@ -104,7 +105,7 @@ void	format_error(char **matrix_err, t_dlist *tok, int result, int std)
 	{
 		matrix_err[0] = format_string("(",
 				((char *) tok->next->tok->metadata[3]), "): ",
-				 "ambiguous redirect\n");
+				"ambiguous redirect\n");
 		matrix_err[1] = ft_itoa(std);
 		matrix_err[2] = ft_itoa(result);
 	}
@@ -112,7 +113,7 @@ void	format_error(char **matrix_err, t_dlist *tok, int result, int std)
 
 void	converse_index(char **matrix_err, int result)
 {
-	int index;
+	int	index;
 
 	index = result;
 	index -= ft_atoi(matrix_err[2]);
@@ -133,7 +134,10 @@ char	**files_in(t_dlist *tokens, char **matrix_err)
 	while (aux->tok->type != PIPE)
 	{
 		if (aux->tok->type == R_IN || aux->tok->type == H_DOC)
-			ambiguous_redirect_validation(matrix_err, aux, ++result, 0);
+		{
+			result++;
+			ambiguous_redirect_validation(matrix_err, aux, result, 0);
+		}
 		if (aux->prev == NULL)
 			break ;
 		aux = aux->prev;
@@ -159,7 +163,10 @@ char	**files_out(t_dlist *tokens, char **matrix_err)
 	while (aux->tok->type != PIPE)
 	{
 		if (aux->tok->type == R_OUT || aux->tok->type == APPEND)
-			ambiguous_redirect_validation(matrix_err, aux, ++result, 1);
+		{
+			result++;
+			ambiguous_redirect_validation(matrix_err, aux, result, 1);
+		}
 		if (aux->prev == NULL)
 			break ;
 		aux = aux->prev;

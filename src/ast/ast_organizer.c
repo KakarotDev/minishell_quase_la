@@ -6,18 +6,30 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/18 21:34:10 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/20 19:13:34 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	first_command_organizer(t_ast *root, int pipe_fds[2])
-// {
-// 	manage_pipes_fd(pipe_fds, LEFT);
-// 	exec_cmd(root);
-// 	closing_process(root);
-// }
+void	manage_pipes_fd(int *pipe_fds, int side)
+{
+	if (side == LEFT)
+		dup2(pipe_fds[1], STDOUT_FILENO);
+	else if (side == RIGHT)
+		dup2(pipe_fds[0], STDIN_FILENO);
+	close(pipe_fds[0]);
+	close(pipe_fds[1]);
+}
+
+void	tree_exec_pipe_procedure(t_ast *root, int pipe_fds[2])
+{
+	is_process(TRUE);
+	root->left->first_leaf = root->first_leaf;
+	manage_pipes_fd(pipe_fds, LEFT);
+	tree_exec(root->left);
+	closing_process(root);
+}
 
 void	command_organizer(t_ast *root, int pipe_fds[2], int side)
 {
@@ -47,31 +59,6 @@ void	brothers_functions(t_dlist **tokens)
 	free(tokens);
 	tree_exec(root);
 	ft_free_ast(root);
-}
-
-void	execv_only_child(t_ast *root)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid == 0)
-	{
-		is_process(TRUE);
-		if (root->redir_fds[1] != 0)
-		{
-			dup2(root->redir_fds[1], STDOUT_FILENO);
-			close(root->redir_fds[1]);
-		}		
-		if (root->redir_fds[0] != 0)
-		{
-			dup2(root->redir_fds[0], STDIN_FILENO);
-			close(root->redir_fds[0]);
-		}
-		signal(SIGQUIT, SIG_DFL);
-		if (execve(root->path, root->cmd_matrix, hook_environ(NULL, 0)))
-			execve_error_exit(root);
-	}
-	last_exit_status(get_ret_process(pid));
 }
 
 void	only_child_functions(t_dlist **tokens)

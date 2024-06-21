@@ -79,8 +79,8 @@ int	files_out_control(t_ast *root)
 {
 	int	i;
 
-	i = 0;
-	while (root && root->files[1][i] != NULL)
+	i = -1;
+	while (root && root->files[1][++i] != NULL)
 	{
 		if (root->files[2] != NULL)
 		{
@@ -100,7 +100,6 @@ int	files_out_control(t_ast *root)
 		}
 		if (redirect_out_error(root))
 			return (EXIT_FAILURE);
-		i++;
 	}
 	return (EXIT_SUCCESS);
 }

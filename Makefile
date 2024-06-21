@@ -96,7 +96,7 @@ LIBFT_PATH = lib/libft
 MAIN_SRC = ./src/main.c
 
 # files mandatory #
-CFILES += $(addprefix $(AST)/, ast_organizer.c ast.c ast_aux_functions.c)
+CFILES += $(addprefix $(AST)/, ast_creator.c ast_destructor.c ast_organizer.c)
 CFILES += $(addprefix $(AUXILIARY)/, is_an_address.c go_to.c ft_close_fds.c ft_how_many_pipes.c temp_functions.c \
 	free_struct_token.c ft_count_tokens.c ft_cpy_array_data.c ft_destructor_struct.c ft_free_ast.c \
 	ft_free_matrix.c ft_have_char.c ft_have_op.c ft_is_redirect.c ft_open_fd.c ft_open_fork.c ft_print_ast.c ft_print_dlist.c \
@@ -108,7 +108,7 @@ CFILES += $(addprefix $(DLST_PROCEDURES)/, ft_add_next.c ft_append_dlist.c ft_cp
 	ft_dlist_have_type.c ft_dlist_last_occur.c ft_dlst_last.c ft_newnode_dlist.c)
 CFILES += $(addprefix $(ENVIRONMENT)/, copy_environ.c read_var.c)
 CFILES += $(addprefix $(ERRORS)/, path_validation.c)
-CFILES += $(addprefix $(EXECUTION)/, redirect_errors.c redirect_aux_functions.c redirect.c cmds_paths.c builtins_caller.c)
+CFILES += $(addprefix $(EXECUTION)/, ast_exec.c redirect_errors.c redirect_aux_functions.c redirect.c cmds_paths.c builtins_caller.c)
 CFILES += $(addprefix $(EXPANSIONS)/, expansion.c expansion_utils.c quote_removal.c)
 CFILES += $(addprefix $(LEXER)/, lexer.c generate_tokens.c quote_validation.c)
 CFILES += $(addprefix $(PARSER)/, parser.c check_redirections.c check_pipes.c parser_validation.c)
