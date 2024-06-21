@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:02:51 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/20 18:54:25 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/21 18:23:47 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ int	close_and_return(char *path, char **mat_partial_paths, int control)
 {
 	if (control == 0)
 	{
-		write_err_msg(path, NOFILE, 126);
+		write_err_msg_status(path, NOFILE, 126);
 		ft_free_matrix_char(mat_partial_paths);
 		return (EXIT_FAILURE);
 	}
 	else if (control == 1)
 	{
-		write_err_msg(path, MINI_EACCES, 126);
+		write_err_msg_status(path, MINI_EACCES, 126);
 		ft_free_matrix_char(mat_partial_paths);
 		return (EXIT_FAILURE);
 	}
@@ -87,7 +87,7 @@ int	checking_the_last_one(char *path)
 	dir_fd = open(path, __O_DIRECTORY);
 	if (dir_fd > 0)
 	{
-		write_err_msg(path, MINI_EISDIR, 126);
+		write_err_msg_status(path, MINI_EISDIR, 126);
 		close(dir_fd);
 		return (EXIT_FAILURE);
 	}
@@ -95,12 +95,12 @@ int	checking_the_last_one(char *path)
 	{
 		if (access(path, F_OK) < 0)
 		{
-			write_err_msg(path, NOFILE, 126);
+			write_err_msg_status(path, NOFILE, 126);
 			return (EXIT_FAILURE);
 		}
 		else if (access(path, X_OK) < 0)
 		{
-			write_err_msg(path, MINI_EACCES, 126);
+			write_err_msg_status(path, MINI_EACCES, 126);
 			return (EXIT_FAILURE);
 		}
 	}

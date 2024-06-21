@@ -37,102 +37,90 @@ char	*format_string(char *s, char *s1, char *s2, char *s3)
 	return (formatted_string);
 }
 
-void	write_err_msg(char	*file, enum e_error error, int status_error)
+void	ambiguous_redirect_validation(char **matrix_err,
+		t_dlist *tok, int result, int std)
 {
-	char	*str_error;
-
-	str_error = "";
-	if (error == MINI_EISDIR)
-		str_error = "Is a directory\n";
-	else if (error == MINI_EACCES)
-		str_error = "Permission denied\n";
-	else if (error == NOFILE)
-		str_error = "No such file or directory\n";
-	str_error = format_string("(", file, "): ", str_error);
-	ft_putstr_fd(str_error, STDERR_FILENO);
-	free(str_error);
-	last_exit_status(status_error);
-}
-
-void	closing_process_message(t_ast *root, int index_files,
-		int *index, enum e_error error)
-{
-	write_err_msg(root->files[index_files][*index], error, 1);
-	*index = -2;
-}
-
-void	setting_redirect_error(int *index, enum e_error error, int fd)
-{
-	if (fd > 0)
-		close(fd);
-	*index = -2;
-	last_exit_status(error);
-}
-
-int	redirect_in_error(t_ast *root)
-{
-	int	index;
-
-	index = 0;
-	while (index != -1 && root->files[0][index] != NULL)
+	if (tok->next->tok->type == WORD)
 	{
-		if (ft_atoi(root->files[3][1]) == 0
-			&& ft_atoi(root->files[3][2]) == index)
-		{
-			ft_putstr_fd(root->files[3][0], STDERR_FILENO);
-			index = -2;
-		}
-		if (index != -2 && access(root->files[0][index], F_OK) == -1)
-			closing_process_message(root, 0, &index, NOFILE);
-		else if (index != -2 && access(root->files[0][index], R_OK) == -1)
-			closing_process_message(root, 0, &index, MINI_EACCES);
-		index++;
+		if (matrix_err[0])
+			format_error(matrix_err, tok, result, std);
+		else
+			format_error(matrix_err, tok, result, std);
 	}
-	if (index == -1)
+	else if (tok->next->next)
+	{
+		if (tok->next->next->tok->type == IO_FILE)
+		{
+			if (matrix_err[0])
+				format_error(matrix_err, tok, result, std);
+			else
+				format_error(matrix_err, tok, result, std);
+		}
+	}
+}
+
+void	format_error(char **matrix_err, t_dlist *tok, int result, int std)
+{
+	if (matrix_err[0])
+	{
+		free(matrix_err[0]);
+		free(matrix_err[1]);
+		matrix_err[0] = format_string("(",
+				((char *) tok->next->tok->metadata[3]),
+				"): ", "ambiguous redirect\n");
+		matrix_err[1] = ft_itoa(std + 1);
+		matrix_err[2] = ft_itoa(result);
+	}
+	else
+	{
+		matrix_err[0] = format_string("(",
+				((char *) tok->next->tok->metadata[3]), "): ",
+				"ambiguous redirect\n");
+		matrix_err[1] = ft_itoa(std + 1);
+		matrix_err[2] = ft_itoa(result);
+	}
+}
+
+int	redirect_in_error(char **matrix_err, char *file, int index)
+{
+	if ((ft_atoi(matrix_err[1]) + 1) == 2 && ft_atoi(matrix_err[2]) == index)
+	{
+		ft_putstr_fd(matrix_err[0], STDERR_FILENO);
 		return (EXIT_FAILURE);
+	}
+	if (access(file, F_OK) == -1)
+	{
+		write_err_msg(file, NOFILE);
+		return (EXIT_FAILURE);
+	}
+	else if (access(file, R_OK) == -1)
+	{
+		write_err_msg(file, MINI_EACCES);
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
-// void	redirect_out_error_aux(int fd, int index, t_ast *root)
-// {
-// 	if (fd != -1)
-// 	{
-// 		closing_process_message(root, 1, &index, MINI_EISDIR);
-// 		close(fd);
-// 	}
-// 	else if ((access(root->files[1][index], W_OK) != 0))
-// 		closing_process_message(root, 1, &index, MINI_EACCES);
-// }
-
-int	redirect_out_error(t_ast *root)
+int	redirect_out_error(char **matrix_err, char *file, int index)
 {
-	int	index;
 	int	fd;
 
-	index = 0;
-	while (index != -1 && root->files[1][index] != NULL)
+	if ((ft_atoi(matrix_err[1]) + 1) == 3 && ft_atoi(matrix_err[2]) == index)
 	{
-		if (ft_atoi(root->files[3][1]) == 1
-			&& ft_atoi(root->files[3][2]) == index)
-		{
-			ft_putstr_fd(root->files[3][0], STDERR_FILENO);
-			index = -2;
-		}
-		if (index != -2)
-		{
-			fd = open(root->files[1][index], __O_DIRECTORY);
-			if (fd != -1)
-			{
-				closing_process_message(root, 1, &index, MINI_EISDIR);
-				close(fd);
-			}
-			else if ((access(root->files[1][index], W_OK) != 0))
-				closing_process_message(root, 1, &index, MINI_EACCES);
-			//redirect_out_error_aux(fd, index, root);
-		}
-		index++;
-	}
-	if (index == -1)
+		ft_putstr_fd(matrix_err[0], STDERR_FILENO);
 		return (EXIT_FAILURE);
+	}
+	fd = open(file, __O_DIRECTORY);
+	if (fd != -1)
+	{
+		write_err_msg(file, MINI_EISDIR);
+		close(fd);
+		return (EXIT_FAILURE);
+	}
+	else if ((access(file, W_OK) != 0))
+	{
+		write_err_msg(file, MINI_EACCES);
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }

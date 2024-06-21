@@ -73,7 +73,8 @@ void	renewing_token(t_dlist *tok)
 		i++;
 	}
 	if (!lexs[i] && i == 0)
-		new = ft_add_next(new, ft_newnode_dlist("", WORD, tok->tok->metadata), i);
+		new = ft_add_next(new,
+				ft_newnode_dlist(NULL, WORD, tok->tok->metadata), i);
 	ft_free_matrix((void **) lexs);
 	return ;
 }

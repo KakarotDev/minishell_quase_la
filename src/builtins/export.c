@@ -6,7 +6,7 @@
 /*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:36 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/17 17:38:26 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/20 23:20:03 by myokogaw         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ char	**append_new_variable(char **envp, char *assignment)
 	}
 	new_env[i++] = ft_strdup(assignment);
 	hook_environ(NULL, 1);
-	return (new_env);
+	return (hook_environ(new_env, 0));
 }
 
 int	builtin_export(char **matrix)
@@ -99,6 +99,5 @@ int	builtin_export(char **matrix)
 		envp = append_new_variable(envp, *matrix);
 		matrix++;
 	}
-	hook_environ(envp, 0);
 	return (EXIT_SUCCESS);
 }

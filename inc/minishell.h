@@ -113,6 +113,8 @@ typedef struct s_pipex
 }	t_pipex;
 
 // Auxiliary functions
+char	**creat_file_mat(t_dlist *tokens, int result, enum e_type type,
+			enum e_type typ);
 char	**hook_environ(char **envp, int free);
 char	*format_string(char *s, char *s1, char *s2, char *s3);
 char	*ft_strndup(char const *s, unsigned int start, size_t len);
@@ -136,7 +138,8 @@ void	ft_close_fds(void);
 void	close_fds(int fd_max);
 void	skip_single_quotes(char *lexeme, long int *position);
 void	handling_pipe(t_dlist **head, char **lexemes, int *index);
-void	write_err_msg(char	*file, enum e_error error, int status_error);
+void	write_err_msg_status(char	*file, enum e_error error, int status_err);
+void	write_err_msg(char	*file, enum e_error error);
 int		ft_open_fd(char *path, int flags);
 int		ft_have_char(char *str, char c);
 int		ft_have_op(char *input);
@@ -268,21 +271,28 @@ char	***have_redirect(t_dlist *tokens);
 char	**have_append(t_dlist *tokens);
 char	**creat_append_mat(t_dlist *aux_t, int size_append);
 char	**create_cmd_matrix(t_dlist *tokens);
+char	**files_in(t_dlist *tokens, char **matrix_err);
+char	**files_out(t_dlist *tokens, char **matrix_err);
 char	**tokens_to_args(t_ast *leaf);
 char	**get_paths(void);
 char	*its_a_address(char *lex);
+void	format_error(char **matrix_err, t_dlist *tok, int result, int std);
 void	execv_only_child(t_ast *root);
 void	handle_pipe(t_ast *leaf);
 void	execution(t_ast **ast);
 void	exec_cmd(t_ast *root);
 void	ast_function(t_dlist **tokens);
 void	tree_exec(t_ast *root);
+int		check_append(char **mat_append, char *ref);
 int		redir_fds_control(t_ast *root);
 int		files_out_control(t_ast *root);
 int		files_in_control(t_ast *root);
 
 // Exec errors
-int		redirect_in_error(t_ast *root);
-int		redirect_out_error(t_ast *root);
+void	converse_index(char **matrix_err, int result);
+void	ambiguous_redirect_validation(char **matrix_err,
+			t_dlist *tok, int result, int std);
+int		redirect_in_error(char **matrix_err, char *file, int index);
+int		redirect_out_error(char **matrix_err, char *file, int index);
 
 #endif

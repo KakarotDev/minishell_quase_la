@@ -12,7 +12,8 @@
 
 #include "minishell.h"
 
-static void	transcribing_content(char *content, int fd, long int *index, long int *start)
+static void	transcribing_content(char *content, int fd, long int
+		*index, long int *start)
 {
 	*index = *start;
 	if (*content == ' ')
