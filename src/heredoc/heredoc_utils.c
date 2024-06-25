@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:40:19 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/20 23:23:21 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/24 19:26:12 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,25 @@ int	received_sigint(int *fds, char *input)
 	return (FALSE);
 }
 
-int	warning_heredoc(char *input, char *delimiter)
+int	is_delimiter(char *delimiter, char *input)
+{
+	if (!(!input))
+	{
+		if (*input)
+		{
+			if (!ft_strncmp(delimiter, input, ft_strlen(input)))
+			{
+				free(input);
+				return (TRUE);
+			}
+		}
+		return (FALSE);
+	}
+	else
+		return (FALSE);
+}
+
+int	warn_heredoc(char *input, char *delimiter)
 {
 	if (!input)
 	{
@@ -65,22 +83,4 @@ int	open_fds_heredoc(char *file, int *fds)
 		return (TRUE);
 	}
 	return (FALSE);
-}
-
-int	is_delimiter(char *delimiter, char *input)
-{
-	if (!(!input))
-	{
-		if (*input)
-		{
-			if (!ft_strncmp(delimiter, input, ft_strlen(input)))
-			{
-				free(input);
-				return (TRUE);
-			}
-		}
-		return (FALSE);
-	}
-	else
-		return (FALSE);
 }

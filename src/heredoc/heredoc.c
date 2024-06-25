@@ -98,7 +98,7 @@ void	heredoc(t_token *heredoc_tok, char *delimiter)
 	{
 		its_in_heredoc(1);
 		input = readline("> ");
-		if (received_sigint(fds, input) || warning_heredoc(input, revised_del[0]))
+		if (received_sigint(fds, input) || warn_heredoc(input, revised_del[0]))
 			break ;
 		if (!is_delimiter(delimiter, input))
 			write_to_heredoc_file(input, fds[0], *revised_del[1]);
