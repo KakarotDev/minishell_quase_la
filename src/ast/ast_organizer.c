@@ -6,13 +6,13 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/25 16:47:32 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 18:58:25 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	manage_pipes_fd(int *pipe_fds, int side)
+static void	manage_pipes_fd(int *pipe_fds, int side)
 {
 	if (side == LEFT)
 		dup2(pipe_fds[1], STDOUT_FILENO);

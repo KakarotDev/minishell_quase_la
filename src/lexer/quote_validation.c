@@ -10,28 +10,26 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 int	quote_validation(char *input)
 {
 	int	s_quote;
 	int	d_quote;
 
-	s_quote = FALSE;
-	d_quote = FALSE;
+	s_quote = 0;
+	d_quote = 0;
 	while (*input)
 	{
 		if (*input == '\'' && !s_quote && !d_quote)
-			s_quote = TRUE;
+			s_quote = 1;
 		else if (*input == '\'' && s_quote)
-			s_quote = FALSE;
+			s_quote = 0;
 		if (*input == '\"' && !d_quote && !s_quote)
-			d_quote = TRUE;
+			d_quote = 1;
 		else if (*input == '\"' && d_quote)
-			d_quote = FALSE;
+			d_quote = 0;
 		input++;
 	}
 	if (s_quote || d_quote)
-		return (TRUE);
-	return (FALSE);
+		return (1);
+	return (0);
 }

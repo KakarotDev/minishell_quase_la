@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_count_tokens.c                                  :+:      :+:    :+:   */
+/*   pipe_count.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/01 17:49:14 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/16 04:09:26 by myokogaw         ###   ########.fr       */
+/*   Created: 2024/06/26 19:06:10 by parthur-          #+#    #+#             */
+/*   Updated: 2024/06/26 19:07:19 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_count_tokens(t_dlist **exec_tokens)
+int	pipe_count(t_dlist *tokens)
 {
-	t_dlist	*temp;
-	int		i;
+	t_dlist	*aux;
+	int		count;
 
-	i = 0;
-	if (!exec_tokens)
-		return (i);
-	if (!*exec_tokens)
-		return (i);
-	temp = *exec_tokens;
-	while (temp)
+	count = 0;
+	aux = tokens;
+	while (aux)
 	{
-		temp = temp->next;
-		i++;
+		if (aux->tok->type == PIPE)
+			count++;
+		aux = aux->next;
 	}
-	return (i);
+	return (count);
 }

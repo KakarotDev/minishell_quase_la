@@ -6,13 +6,13 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 17:36:08 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/24 18:45:18 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 20:25:53 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	receive_sig_int_heredoc(int sig)
+static void	receive_sig_int_heredoc(int sig)
 {
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	close(STDIN_FILENO);
@@ -39,7 +39,7 @@ int	after_prompt(int is_after)
 	return (prompt);
 }
 
-void	receive_sig_int(int sig)
+static void	receive_sig_int(int sig)
 {
 	if (!is_process(-1))
 		ft_putstr_fd("\n", STDOUT_FILENO);

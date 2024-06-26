@@ -18,5 +18,5 @@ int	parser_validation(t_dlist **tokens)
 		return (syntax_error(UNEXPECTED, tokens));
 	else if (check_redirections(tokens))
 		return (syntax_error(UNEXPECTED, tokens));
-	return (0);
+	return (EXIT_SUCCESS);
 }

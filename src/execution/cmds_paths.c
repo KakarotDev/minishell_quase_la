@@ -6,13 +6,13 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 18:09:03 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/20 17:35:14 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:39:54 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**get_paths(void)
+static char	**get_paths(void)
 {
 	int		index;
 	char	*temp_string;
@@ -35,7 +35,7 @@ char	**get_paths(void)
 	return (paths_matrix);
 }
 
-char	*create_path(t_dlist *tokens)
+static char	*create_path(t_dlist *tokens)
 {
 	t_dlist	*aux;
 	char	*path;
@@ -64,7 +64,7 @@ char	*create_path(t_dlist *tokens)
 	return (NULL);
 }
 
-char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
+static char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
 {
 	char	**cmd_matrix;
 	int		i;
@@ -83,7 +83,7 @@ char	**defining_commands(t_dlist *tokens, size_t mat_exec_len)
 	return (cmd_matrix);
 }
 
-char	**create_cmd_matrix(t_dlist *tokens)
+static char	**create_cmd_matrix(t_dlist *tokens)
 {
 	t_dlist	*aux;
 	char	**cmd_matrix;

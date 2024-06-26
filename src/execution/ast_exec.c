@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 19:06:37 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/24 18:33:23 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:38:01 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	execv_only_child(t_ast *root)
 	last_exit_status(get_ret_process(pid));
 }
 
-void	execv_pipes(t_ast *root)
+static void	execv_pipes(t_ast *root)
 {
 	int	pid;
 

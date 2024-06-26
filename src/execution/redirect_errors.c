@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+static void	format_error(char **matrix_err, t_dlist *tok, int result, int std);
+
 char	*format_string(char *s, char *s1, char *s2, char *s3)
 {
 	int		lenght;
@@ -59,7 +61,7 @@ void	ambiguous_redirect_validation(char **matrix_err,
 	}
 }
 
-void	format_error(char **matrix_err, t_dlist *tok, int result, int std)
+static void	format_error(char **matrix_err, t_dlist *tok, int result, int std)
 {
 	if (matrix_err[0])
 	{
@@ -90,12 +92,12 @@ int	redirect_in_error(char **matrix_err, char *file, int index)
 	}
 	if (access(file, F_OK) == -1)
 	{
-		write_err_msg(file, NOFILE);
+		write_err_msg_status(file, NOFILE, 1);
 		return (EXIT_FAILURE);
 	}
 	else if (access(file, R_OK) == -1)
 	{
-		write_err_msg(file, MINI_EACCES);
+		write_err_msg_status(file, MINI_EACCES, 1);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
@@ -113,13 +115,13 @@ int	redirect_out_error(char **matrix_err, char *file, int index)
 	fd = open(file, __O_DIRECTORY);
 	if (fd != -1)
 	{
-		write_err_msg(file, MINI_EISDIR);
+		write_err_msg_status(file, MINI_EISDIR, 1);
 		close(fd);
 		return (EXIT_FAILURE);
 	}
 	else if ((access(file, W_OK) != 0))
 	{
-		write_err_msg(file, MINI_EACCES);
+		write_err_msg_status(file, MINI_EACCES, 1);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

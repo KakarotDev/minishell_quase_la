@@ -12,23 +12,21 @@
 
 #include "minishell.h"
 
-extern char	**environ;
-
 char	**copy_environ(void)
 {
 	char	**my_environ;
 	int		i;
 
 	i = 0;
-	while (environ[i])
+	while (__environ[i])
 		i++;
 	my_environ = (char **) ft_calloc(i + 1, sizeof(char *));
 	if (!my_environ)
 		return (NULL);
 	i = 0;
-	while (environ[i])
+	while (__environ[i])
 	{
-		my_environ[i] = ft_strdup(environ[i]);
+		my_environ[i] = ft_strdup(__environ[i]);
 		i++;
 	}
 	return (my_environ);

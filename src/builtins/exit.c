@@ -6,13 +6,13 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:24 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/25 16:48:46 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:21:33 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	validating_string(const char *arg)
+static int	validating_string(const char *arg)
 {
 	int	index;
 
@@ -35,7 +35,7 @@ int	validating_string(const char *arg)
 	return (FALSE);
 }
 
-int	validating_values_64bits(const char *arg, const char *value)
+static int	validating_values_64bits(const char *arg, const char *value)
 {
 	int	index;
 
@@ -49,7 +49,7 @@ int	validating_values_64bits(const char *arg, const char *value)
 	return (EXIT_SUCCESS);
 }
 
-int	validating_arg(const char *arg)
+static int	validating_arg(const char *arg)
 {
 	int	string_lenght;
 	int	maximum_string_lenght;

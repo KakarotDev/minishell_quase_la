@@ -6,11 +6,14 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 19:05:29 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/20 19:16:20 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 18:56:18 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static t_ast	*create_pipe_leaf(t_dlist *tokens);
+static t_ast	*append_leaf(t_ast *root, t_ast *leaf);
 
 t_ast	*create_ast(t_dlist **tokens)
 {
@@ -41,7 +44,7 @@ t_ast	*create_ast(t_dlist **tokens)
 	return (root);
 }
 
-t_ast	*create_pipe_leaf(t_dlist *tokens)
+static t_ast	*create_pipe_leaf(t_dlist *tokens)
 {
 	t_ast	*pipe_leaf;
 
@@ -56,7 +59,7 @@ t_ast	*create_pipe_leaf(t_dlist *tokens)
 	return (pipe_leaf);
 }
 
-t_ast	*append_leaf(t_ast *root, t_ast *leaf)
+static t_ast	*append_leaf(t_ast *root, t_ast *leaf)
 {
 	if (root == NULL)
 		return (leaf);

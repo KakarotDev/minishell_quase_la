@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:10 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/05 20:07:30 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:18:15 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	write_echo(char *str, int *space)
+static void	write_echo(char *str, int *space)
 {
 	if (*space && *str != '\0')
 		write(1, " ", 1);

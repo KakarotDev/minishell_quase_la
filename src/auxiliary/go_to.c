@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 23:19:47 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/20 17:27:06 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:12:31 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_dlist	*go_to_pipe_or_first(t_dlist *aux_t)
 	return (aux_t);
 }
 
-t_dlist	*go_to_first_word_aux(t_dlist *tokens)
+static t_dlist	*go_to_first_word_aux(t_dlist *tokens)
 {
 	t_dlist	*aux_t;
 

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:36 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/20 23:20:03 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:23:33 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_char_before_equals(char *assignment)
+static int	check_char_before_equals(char *assignment)
 {
 	char	*equal_op;
 
@@ -25,7 +25,7 @@ int	check_char_before_equals(char *assignment)
 	return (EXIT_SUCCESS);
 }
 
-int	verify_is_valid_varname(char *assignment)
+static int	verify_is_valid_varname(char *assignment)
 {
 	if (ft_isdigit(assignment[0]))
 		return (report_error_export());
@@ -38,7 +38,7 @@ int	verify_is_valid_varname(char *assignment)
 	return (EXIT_SUCCESS);
 }
 
-int	count_and_check_curr_matrix(char **matrix, char *assignment)
+static int	count_and_check_curr_matrix(char **matrix, char *assignment)
 {
 	char	*varname_end;
 	int		size;
@@ -63,7 +63,7 @@ int	count_and_check_curr_matrix(char **matrix, char *assignment)
 	return (i);
 }
 
-char	**append_new_variable(char **envp, char *assignment)
+static char	**append_new_variable(char **envp, char *assignment)
 {
 	char	**new_env;
 	int		i;

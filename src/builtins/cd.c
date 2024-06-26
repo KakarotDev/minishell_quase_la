@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:58:57 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/17 17:44:33 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:17:33 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	update_environment(void)
+static void	update_environment(void)
 {
 	char	*matrix[3];
 
@@ -29,7 +29,7 @@ void	update_environment(void)
 	return ;
 }
 
-int	error_msg_cd(int err, char *path)
+static int	error_msg_cd(int err, char *path)
 {
 	if (err == ERRNO)
 		perror("Error\n cd");
@@ -42,7 +42,7 @@ int	error_msg_cd(int err, char *path)
 	return (EXIT_FAILURE);
 }
 
-int	try_except_change_dir(char *curpath)
+static int	try_except_change_dir(char *curpath)
 {
 	char	*home;
 

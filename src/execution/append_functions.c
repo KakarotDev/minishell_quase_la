@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 19:03:37 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/21 19:03:53 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:37:05 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	check_append(char **mat_append, char *ref)
 	return (0);
 }
 
-char	**creat_append_mat(t_dlist *aux_t, int size_append)
+static char	**creat_append_mat(t_dlist *aux_t, int size_append)
 {
 	int		i;
 	char	**appends;

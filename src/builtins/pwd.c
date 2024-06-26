@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:47 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/05/05 17:09:35 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:24:22 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*alloc_error(void);
+static char	*alloc_error(void);
 
-void	pwd_error(char *buf)
+static void	pwd_error(char *buf)
 {
 	perror("Error\n pwd");
 	free(buf);
@@ -22,7 +22,7 @@ void	pwd_error(char *buf)
 	return ;
 }
 
-char	*pwd_erange(char *buf, int size)
+static char	*pwd_erange(char *buf, int size)
 {
 	static int	n_size;
 
@@ -41,7 +41,7 @@ char	*pwd_erange(char *buf, int size)
 	return (buf);
 }
 
-char	*alloc_error(void)
+static char	*alloc_error(void)
 {
 	ft_putstr_fd("Error\n error when alloc memory\n", 2);
 	return (NULL);

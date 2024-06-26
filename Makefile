@@ -10,60 +10,26 @@ SLEEP := sleep 0.2
 
 # colors #
 DEFAULT=\033[39m
-BLACK=\033[30m
 DARK_RED=\033[31m
 DARK_GREEN=\033[32m
-DARK_YELLOW=\033[33m
-DARK_BLUE=\033[34m
-DARK_MAGENTA=\033[35m
-DARK_CYAN=\033[36m
-LIGHT_GRAY=\033[37m
-DARK_GRAY=\033[90m
 RED=\033[91m
 GREEN=\033[92m
-ORANGE=\033[93m
-BLUE=\033[94m
-MAGENTA=\033[95m
-CYAN=\033[96m
-WHITE=\033[97m
-BG_DEFAULT=\033[49m
-BG_BLACK=\033[40m
-BG_DARK_RED=\033[41m
-BG_DARK_GREEN=\033[42m
-BG_DARK_YELLOW=\033[43m
-BG_DARK_BLUE=\033[44m
-BG_DARK_MAGENTA=\033[45m
-BG_DARK_CYAN=\033[46m
-BG_LIGHT_GRAY=\033[47m
-BG_DARK_GRAY=\033[100m
-BG_RED=\033[101m
-BG_GREEN=\033[102m
-BG_ORANGE=\033[103m
-BG_BLUE=\033[104m
-BG_MAGENTA=\033[105m
-BG_CYAN=\033[106m
-BG_WHITE=\033[107m
 RESET=\033[0m
 RESET_TERM=\r\033[K
 
 # messages #
 MANDATORY = Program compiled
-LBONUS = Bonus Program compiled
 CLEAN = Objects delete
 FCLEAN = Program delete
 LIBNAME = minishell
-BLIBNAME = minishell_bonus
 COMP = Compiling
 
 # debug and normal flags #
-DFLAGS = -Wall -Wextra -Werror -g3 # TO DEBBUG
 CFLAGS = -Wall -Werror -Wextra -g3 -pedantic -flto -MD -MP # FOR DEPENDENCIES
-LFLAGS = -march=native # TO OPTIMIZE FOR SPECIFIC ARCHITECTURE
 FFLAGS = -lreadline # FLAGS THAT ONLY WORK AT THE END OF LINE (AFTER OBJECTS)
 
 # paths #
 SRC = src
-BONUS = $(SRC)/bonus
 INC = inc
 OBJ = obj
 
@@ -97,15 +63,15 @@ MAIN_SRC = ./src/main.c
 
 # files mandatory #
 CFILES += $(addprefix $(AST)/, ast_creator.c ast_destructor.c ast_organizer.c)
-CFILES += $(addprefix $(AUXILIARY)/, creat_file_mat.c write_err_msg_status.c is_an_address.c go_to.c ft_close_fds.c \
-	ft_how_many_pipes.c temp_functions.c free_struct_token.c ft_count_tokens.c ft_cpy_array_data.c ft_destructor_struct.c ft_free_ast.c \
-	ft_free_matrix.c ft_have_char.c ft_have_op.c ft_is_redirect.c ft_open_fd.c ft_open_fork.c \
-	ft_print_matrix.c ft_strndup.c get_ret_process.c hook_environ.c last_exit_status.c syntax_error.c hook_pwd.c set_entrance.c \
-	skip_single_quotes.c validating_varname.c ft_isspace.c ft_getenv.c ft_strcmp.c ft_matrix_count.c handling_pipe.c \
+CFILES += $(addprefix $(AUXILIARY)/, pipe_count.c creat_file_mat.c write_err_msg_status.c go_to.c\
+	free_struct_token.c ft_cpy_array_data.c ft_destructor_struct.c \
+	ft_free_ast.c ft_free_matrix.c ft_have_char.c ft_have_op.c ft_is_redirect.c ft_open_fd.c\
+	ft_strndup.c get_ret_process.c hook_environ.c last_exit_status.c syntax_error.c hook_pwd.c set_entrance.c \
+	skip_single_quotes.c ft_isspace.c ft_getenv.c ft_strcmp.c ft_matrix_count.c handling_pipe.c \
 	its_in_heredoc.c heredoc_file_counter.c received_sigint_in_heredoc.c is_process.c)
 CFILES += $(addprefix $(BUILTINS)/, cd.c export.c echo.c pwd.c env.c export_utils.c exit.c exit_utils.c unset.c)
-CFILES += $(addprefix $(DLST_PROCEDURES)/, ft_add_next.c ft_append_dlist.c ft_cpy_dlst.c ft_cpy_node.c ft_dlist_delete_from.c \
-	ft_dlist_have_type.c ft_dlist_last_occur.c ft_dlst_last.c ft_newnode_dlist.c)
+CFILES += $(addprefix $(DLST_PROCEDURES)/, ft_add_next.c ft_append_dlist.c \
+	ft_dlst_last.c ft_newnode_dlist.c)
 CFILES += $(addprefix $(ENVIRONMENT)/, copy_environ.c read_var.c)
 CFILES += $(addprefix $(ERRORS)/, path_validation.c)
 CFILES += $(addprefix $(EXECUTION)/, ast_exec.c redirect_files_in.c redirect_files_out.c append_functions.c redirect_errors.c \
@@ -121,36 +87,15 @@ CFILES += $(addprefix $(HEREDOC)/, heredoc.c heredoc_utils.c heredoc_expansion.c
 OBJECT = $(CFILES:%.c=$(OBJ)/%.o)
 BIN_OBJ = $(MAIN_SRC:%.c=$(OBJ)/%.o)
 
-# define bonus #
-ifdef WITH_BONUS
-	NAME = $(BLIBNAME)
-	compile = compile_bonus
-	MANDATORY = $(LBONUS)
-	MAGENTA = $(YELLOW)
-	LIBNAME = $(BLIBNAME)
-endif
-
-
-# define debbug #
-ifdef WITH_DEBBUG
-	CFLAGS = $(DFLAGS)
-endif
-
 # functions #
 define create_objects_dir
 	mkdir -p $(dir $@)
 endef
 
 define compile
-	$(CC) -o $(NAME) $(CFLAGS) $(LFLAGS) $(INCLUDES) $(LINCLUDES) $(OBJECT) $(BIN_OBJ) $(LIBFT) $(FFLAGS)
+	$(CC) -o $(NAME) $(CFLAGS) $(INCLUDES) $(LINCLUDES) $(OBJECT) $(BIN_OBJ) $(LIBFT) $(FFLAGS)
 	$(SLEEP)
-	printf "\n$(MAGENTA)$(MANDATORY)\n$(RESET)"
-endef
-
-define compile_bonus
-	$(CC) -o $(NAME) $(CFLAGS) $(LFLAGS) $(INCLUDES) $(LINCLUDES) $(OBJECT) $(BIN_OBJ) $(LIBFT) $(FFLAGS)
-	$(SLEEP)
-	printf "\n$(MAGENTA)$(MANDATORY)\n$(RESET)"
+	printf "\n$(GREEN)$(MANDATORY)\n$(RESET)"
 endef
 
 define compile_source
@@ -171,16 +116,6 @@ define fclean
 	$(call eraseBins)
 	@$(SLEEP)
 	@printf "$(RED)$(FCLEAN)$(RESET)\n"
-endef
-
-define bonus
-	@make WITH_BONUS=TRUE -s
-endef
-
-define debug
-	$(call clean)
-	$(call fclean)
-	$(MAKE) WITH_DEBBUG=TRUE -s
 endef
 
 define eraseBins
@@ -209,12 +144,6 @@ fclean: clean
 
 re: fclean all
 
-bonus:
-	$(call bonus)
-
-debug:
-	$(call debug)
-
-.PHONY: all bonus clean fclean re debug Makefile
+.PHONY: all clean fclean re Makefile
 .DEFAULT_GOAL := all
 .SILENT:

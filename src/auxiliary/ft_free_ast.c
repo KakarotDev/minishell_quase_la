@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	free_tokens(t_dlist *tokens)
+static void	free_tokens(t_dlist *tokens)
 {
 	if (tokens->tok->metadata[3] != 0)
 		free((char *) tokens->tok->metadata[3]);
@@ -22,18 +22,18 @@ void	free_tokens(t_dlist *tokens)
 	free(tokens);
 }
 
-void	free_right(t_ast *right)
+static void	free_right(t_ast *right)
 {
-	ft_free_matrix_char(right->cmd_matrix);
+	ft_free_matrix((void **)right->cmd_matrix);
 	free(right->path);
 	if (right->files[0])
-		ft_free_matrix_char(right->files[0]);
+		ft_free_matrix((void **)right->files[0]);
 	if (right->files[1])
-		ft_free_matrix_char(right->files[1]);
+		ft_free_matrix((void **)right->files[1]);
 	if (right->files[2])
-		ft_free_matrix_char(right->files[2]);
+		ft_free_matrix((void **)right->files[2]);
 	if (right->files[3])
-		ft_free_matrix_char(right->files[3]);
+		ft_free_matrix((void **)right->files[3]);
 	free(right->files);
 	right->files = NULL;
 	right->cmd_matrix = NULL;

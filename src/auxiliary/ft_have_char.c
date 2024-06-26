@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
 int	ft_have_char(char *str, char c)
 {
 	int	i;
@@ -20,8 +18,8 @@ int	ft_have_char(char *str, char c)
 	while (str[i])
 	{
 		if (str[i] == c)
-			return (TRUE);
+			return (1);
 		i++;
 	}
-	return (FALSE);
+	return (0);
 }

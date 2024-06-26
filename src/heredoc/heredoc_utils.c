@@ -6,25 +6,11 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:40:19 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/25 21:40:19 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 20:16:42 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	handling_heredoc(t_dlist **head, char **lexemes, int *i)
-{
-	t_dlist		*node;
-	long int	metadata[4];
-
-	ft_memset(metadata, 0, sizeof(metadata));
-	node = ft_newnode_dlist(lexemes[*i], H_DOC, metadata);
-	ft_append_dlist(head, node);
-	ft_add_next(node, ft_newnode_dlist(lexemes[++(*i)], H_DEL, metadata), 1);
-	heredoc(node->tok, node->next->tok->lex);
-	handle_signal();
-	return ;
-}
 
 int	received_sigint(int *fds, char *input)
 {

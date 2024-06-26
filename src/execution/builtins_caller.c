@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtins_caller.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 17:00:17 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/17 17:46:12 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:38:25 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	save_fd_for_builtins(t_ast *root, int *stdout_fd, int control)
+static void	save_fd_for_builtins(t_ast *root, int *stdout_fd, int control)
 {
 	if (control == 0)
 	{

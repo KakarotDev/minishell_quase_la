@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 16:00:01 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/16 04:06:23 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:26:02 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	is_varname_valid(const char *variable, char **environ)
+static int	is_varname_valid(const char *variable, char **environ)
 {
 	int		i;
 	char	*temp;
@@ -40,7 +40,7 @@ int	is_varname_valid(const char *variable, char **environ)
 	return (FALSE);
 }
 
-int	check_with_assignment(const char *variable, char *curr_variable)
+static int	check_with_assignment(const char *variable, char *curr_variable)
 {
 	char	*varname;
 	int		boolean;
@@ -55,7 +55,7 @@ int	check_with_assignment(const char *variable, char *curr_variable)
 	return (boolean);
 }
 
-void	remaking_env_unset(const char *variable, char **environ)
+static void	remaking_env_unset(const char *variable, char **environ)
 {
 	char	**new_environ;
 	int		i;

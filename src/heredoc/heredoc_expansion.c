@@ -6,13 +6,13 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 19:39:45 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/25 20:12:20 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/26 20:14:50 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_dlist	*dealing_with_last_lexeme_heredoc(char *lex, t_dlist *new,
+static t_dlist	*dealing_with_last_lexeme_heredoc(char *lex, t_dlist *new,
 		t_dlist *tok, int i)
 {
 	int	expansion_bool;

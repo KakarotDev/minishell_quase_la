@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 20:07:55 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/17 23:21:50 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/26 19:22:35 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	report_error_export(void)
 	return (EXIT_FAILURE);
 }
 
-void	format_and_print_export(char *variable)
+static void	format_and_print_export(char *variable)
 {
 	write(1, "declare -x ", 11);
 	while (*variable != '=' && *variable)
@@ -39,7 +39,7 @@ void	format_and_print_export(char *variable)
 	return ;
 }
 
-int	sorted_print(char **envp, int lenght, unsigned char *boolean_str)
+static int	sorted_print(char **envp, int lenght, unsigned char *boolean_str)
 {
 	int	var;
 
