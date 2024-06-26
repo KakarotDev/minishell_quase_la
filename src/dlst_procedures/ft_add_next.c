@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_add_next.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 18:21:38 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/18 17:55:13 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/25 18:17:30 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ t_dlist	*ft_add_next(t_dlist *token, t_dlist *new_token, int iteration)
 	}
 	else
 		next = NULL;
+	new_token->tok->metadata[3] = 0;
 	token->next = new_token;
 	new_token->prev = token;
 	new_token->next = next;

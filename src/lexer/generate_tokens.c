@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	ft_isword(t_dlist **head, char *lexeme)
+static int	there_is_an_expansion_in_this_word(char *lexeme, t_dlist **head)
 {
 	long int	metadata[4];
 
@@ -35,6 +35,35 @@ static int	ft_isword(t_dlist **head, char *lexeme)
 	return (FALSE);
 }
 
+static int	ft_isword(t_dlist **head, char *lexeme)
+{
+	t_dlist		*last_tok;
+	long int	met_d[4];
+
+	last_tok = ft_dlst_last(*head);
+	ft_memset(met_d, 0, sizeof(met_d));
+	if (last_tok != NULL)
+	{
+		if (last_tok->tok->type == H_DOC || last_tok->tok->type == APPEND
+			|| last_tok->tok->type == R_OUT || last_tok->tok->type == R_IN)
+		{
+			if (last_tok->tok->type == H_DOC)
+			{
+				ft_append_dlist(head, ft_newnode_dlist(lexeme, H_DEL, met_d));
+				heredoc(last_tok->tok, last_tok->next->tok->lex);
+				handle_signal();
+			}
+			else
+			{
+				has_expansion(lexeme, &met_d[0], &met_d[2]);
+				ft_append_dlist(head, ft_newnode_dlist(lexeme, IO_FILE, met_d));
+			}
+			return (TRUE);
+		}
+	}
+	return (there_is_an_expansion_in_this_word(lexeme, head));
+}
+
 static int	ft_isop(t_dlist **head, char **lexemes, int *i)
 {
 	long int	data[4];
@@ -43,7 +72,7 @@ static int	ft_isop(t_dlist **head, char **lexemes, int *i)
 	start = *i;
 	ft_memset(data, 0, sizeof(data));
 	if (!ft_strncmp(lexemes[*i], "<<", 2))
-		handling_heredoc(head, lexemes, i);
+		ft_append_dlist(head, ft_newnode_dlist(lexemes[*i], H_DOC, data));
 	else if (!ft_strncmp(lexemes[*i], ">>", 2))
 		ft_append_dlist(head, ft_newnode_dlist(lexemes[*i], APPEND, data));
 	else if (!ft_strncmp(lexemes[*i], "|", 1))
@@ -54,12 +83,6 @@ static int	ft_isop(t_dlist **head, char **lexemes, int *i)
 		ft_append_dlist(head, ft_newnode_dlist(lexemes[*i], R_IN, data));
 	else
 		return (FALSE);
-	if (start == *i && ft_strncmp(lexemes[*i], "|", 1))
-	{
-		has_expansion(lexemes[++(*i)], &data[0], &data[2]);
-		if (lexemes[*i])
-			ft_append_dlist(head, ft_newnode_dlist(lexemes[*i], IO_FILE, data));
-	}
 	return (TRUE);
 }
 

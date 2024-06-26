@@ -174,6 +174,8 @@ int				after_prompt(int is_after);
 int				heredoc_file_counter(int filenum);
 int				received_sigint_in_heredoc(int status);
 int				is_process(int consult_or_change);
+int				ft_isexpansion(int c);
+int				ft_isredir(char *lex);
 size_t			matrix_len(char **mat);
 t_dlist			*free_chunk_list(t_dlist *tokens);
 t_dlist			*go_to_pipe_or_first(t_dlist *aux_t);
@@ -204,6 +206,7 @@ int				warn_heredoc(char *input, char *delimiter);
 int				open_and_check_heredoc_file(char *file, int *fd);
 int				input_validation(char *delimiter, char *input);
 int				received_sigint(int *fds, char *input);
+int				has_expansion_heredoc(char *lex, long int *index);
 char			**heredoc_auxiliary(char *delimiter);
 
 // Environment
@@ -233,6 +236,10 @@ char			*getting_varname(char *lexeme, long int *expansion_metadata);
 char			*getting_content(char *var);
 t_dlist			*dealing_with_last_lexeme(char *lex, t_dlist *new,
 					t_dlist *tok, int i);
+void			write_with_quotes(t_dlist *token,
+					char *content, char *varname, int heredoc);
+void			renewing_heredoc_token(t_dlist *tok);
+void			send_for_expansion_heredoc(t_dlist *node);
 
 // Remove quotes
 void			quote_removal(t_dlist **tokens);

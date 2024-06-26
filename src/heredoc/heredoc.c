@@ -64,9 +64,12 @@ static void	write_to_heredoc_file(char *input, int fd, char bool_expansion)
 	if (ft_have_char(input, '$') && bool_expansion == '1')
 	{
 		temp = ft_newnode_dlist(input, ASSIGNMENT_WORD, metadata);
-		has_expansion(input, &temp->tok->metadata[0], &temp->tok->metadata[2]);
-		while (temp->tok->type == ASSIGNMENT_WORD)
-			send_for_expansion(temp);
+		has_expansion_heredoc(input, &temp->tok->metadata[0]);
+		if (temp->tok->metadata[0] != -1)
+		{
+			while (temp->tok->type == ASSIGNMENT_WORD)
+				send_for_expansion_heredoc(temp);
+		}
 		ft_putstr_fd(temp->tok->lex, fd);
 		ft_putstr_fd("\n", fd);
 		free_struct_token(temp->tok);
@@ -100,7 +103,7 @@ void	heredoc(t_token *heredoc_tok, char *delimiter)
 		input = readline("> ");
 		if (received_sigint(fds, input) || warn_heredoc(input, revised_del[0]))
 			break ;
-		if (!is_delimiter(delimiter, input))
+		if (!is_delimiter(revised_del[0], input))
 			write_to_heredoc_file(input, fds[0], *revised_del[1]);
 		else
 			break ;

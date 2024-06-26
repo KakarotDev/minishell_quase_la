@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 19:28:57 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/20 19:13:34 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/25 16:47:32 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	only_child_functions(t_dlist **tokens)
 	int		exit_status;
 
 	root = create_cmd_leaf(*tokens);
+	root->first_leaf = root;
 	free_chunk_list(*tokens);
 	free(tokens);
 	if (!redir_fds_control(root))

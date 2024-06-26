@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:59:24 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/21 18:59:30 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/25 16:48:46 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,13 @@ int	builtin_exit(t_ast *root, int *std_fds)
 		if (validating_arg(cmd_matrix[1]))
 			return (write_err_msg_exit(NUMARGREQUIRED, cmd_matrix[1]));
 		if (cmd_matrix[2])
+		{
+			ft_free_ast(root->first_leaf);
+			hook_environ(NULL, 1);
+			hook_pwd(NULL, 1);
+			close(*std_fds);
 			exit (write_err_msg_exit(TOOMANYARG, NULL));
+		}
 		exit_value = ft_atolli(cmd_matrix[1]);
 		finishing_program_exit(root, std_fds, exit_value);
 	}

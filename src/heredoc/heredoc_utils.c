@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 11:40:19 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/24 19:26:12 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/25 21:40:19 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	handling_heredoc(t_dlist **head, char **lexemes, int *i)
 	node = ft_newnode_dlist(lexemes[*i], H_DOC, metadata);
 	ft_append_dlist(head, node);
 	ft_add_next(node, ft_newnode_dlist(lexemes[++(*i)], H_DEL, metadata), 1);
-	send_for_quote_removal(node->next);
 	heredoc(node->tok, node->next->tok->lex);
 	handle_signal();
 	return ;

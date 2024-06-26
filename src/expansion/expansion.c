@@ -34,7 +34,8 @@ static void	transcribing_content(char *content, int fd, long int
 	return ;
 }
 
-static void	write_with_quotes(t_dlist *token, char *content, char *varname)
+void	write_with_quotes(t_dlist *token, char *content,
+		char *varname, int heredoc)
 {
 	char	*lexeme;
 	int		fd;
@@ -54,7 +55,10 @@ static void	write_with_quotes(t_dlist *token, char *content, char *varname)
 	while (*lexeme)
 		lexeme += write(fd, lexeme, 1);
 	close(fd);
-	renewing_token(token);
+	if (heredoc)
+		renewing_heredoc_token(token);
+	else
+		renewing_token(token);
 	return ;
 }
 
@@ -94,7 +98,7 @@ void	send_for_expansion(t_dlist *node)
 	else
 		content = ft_strdup(variable);
 	if (node->tok->metadata[2])
-		write_with_quotes(node, content, varname);
+		write_with_quotes(node, content, varname, 0);
 	else
 		write_without_quotes(node, content, varname);
 	free(varname);

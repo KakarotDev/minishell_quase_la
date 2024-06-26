@@ -115,10 +115,7 @@ CFILES += $(addprefix $(LEXER)/, lexer.c generate_tokens.c generate_tokens_utils
 CFILES += $(addprefix $(PARSER)/, parser.c check_redirections.c check_pipes.c parser_validation.c)
 CFILES += $(addprefix $(SIGNAL)/, signal.c interrupt_program.c)
 CFILES += $(addprefix $(START)/, run_program.c)
-CFILES += $(addprefix $(HEREDOC)/, heredoc.c heredoc_utils.c)
-
-VAL = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --log-file=valgrind-out.txt
-VAL_TXT = valgrind-out.txt
+CFILES += $(addprefix $(HEREDOC)/, heredoc.c heredoc_utils.c heredoc_expansion.c)
 
 # obj dir #
 OBJECT = $(CFILES:%.c=$(OBJ)/%.o)

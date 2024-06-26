@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_program.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:01:47 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/15 20:37:44 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/25 19:20:47 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,11 @@ int	run_program(void)
 		{
 			add_history(input);
 			tokens = lexer(input);
+			free(input);
 			parser(tokens);
 		}
-		free(input);
+		else
+			free(input);
 	}
 	return (last_exit_status(-1));
 }

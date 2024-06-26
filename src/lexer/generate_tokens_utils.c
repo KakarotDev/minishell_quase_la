@@ -6,7 +6,7 @@
 /*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 19:29:17 by parthur-          #+#    #+#             */
-/*   Updated: 2024/06/24 19:29:46 by parthur-         ###   ########.fr       */
+/*   Updated: 2024/06/25 21:41:20 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	has_expansion(char *lex, long int *index, long int *is_quoted)
 		else
 			*index += 1;
 	}
-	if (lex[*index] == '$')
+	if (lex[*index] == '$' && !(*is_quoted && lex[((*index) + 1)] == '\"'))
 		return (TRUE);
 	*index = -1;
 	return (FALSE);

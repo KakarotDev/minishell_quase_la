@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myokogaw <myokogaw@student.42sp.org.br>    +#+  +:+       +#+        */
+/*   By: parthur- <parthur-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/21 18:55:12 by myokogaw          #+#    #+#             */
-/*   Updated: 2024/06/21 19:00:43 by myokogaw         ###   ########.fr       */
+/*   Updated: 2024/06/25 17:36:00 by parthur-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	finishing_program_exit(t_ast *root, int *std_fds,
 	ft_putstr_fd("exit\n", STDERR_FILENO);
 	hook_environ(NULL, 1);
 	hook_pwd(NULL, 1);
-	ft_free_ast(root);
+	ft_free_ast(root->first_leaf);
 	close(*std_fds);
 	exit (exit_status & 0xFF);
 }
